@@ -548,7 +548,7 @@ function defaultRanges(age) { const i = AGE_RANGES.findIndex(r => inRange(age, r
 const K = { session:'tc_session', profile:'tc_profile', radius:'tc_radius', likes:'tc_likes', hidden:'tc_hidden', chats:'tc_chats' };
 const ROOM_MS = 72 * 3600 * 1000;
 const PREFIX = 'tc-';
-const HUB_PREFIX = 'twoclocks-v3-hub-';
+const HUB_PREFIX = 'twoclocks-v4-hub-';
 const MAX_TAGS = 12;
 
 /* ---------- Helpers ---------- */
@@ -737,14 +737,14 @@ function cleanProfile(p, requireCoords = true, own = false) {
   const handle = typeof p.handle === 'string' ? p.handle.trim().slice(0, 24) : '';
   if (handle.length < 2) return null;
   if (typeof p.photo !== 'string' || p.photo.length > 350000 || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(p.photo)) return null;
-  if (p.faith !== 'spiritual' || p.intent !== 'marriage') return null;
+  if (p.faith !== 'spiritual' || p.intent !== 'partnership') return null;
   const tags = Array.isArray(p.tags) ? p.tags.filter(t => typeof t === 'string').map(t => t.trim().slice(0, 24)).filter(Boolean).slice(0, MAX_TAGS) : [];
   const pub = cleanAnswers(p.pub, PUB_Q);
   if (!pub || tags.length < MIN_TAGS) return null;
   if (!Number.isInteger(p.age) || p.age < 18 || p.age > 99) return null;
   const ages = Array.isArray(p.ages) ? AGE_RANGES.filter(r => p.ages.includes(r)) : [];
   if (!ages.length) return null;
-  const out = { v: 3, handle, photo: p.photo, age: p.age, ages, tags, pub, faith: 'spiritual', intent: 'marriage' };
+  const out = { v: 3, handle, photo: p.photo, age: p.age, ages, tags, pub, faith: 'spiritual', intent: 'partnership' };
   if (own) { const priv = cleanAnswers(p.priv, PRIV_Q); if (!priv) return null; out.priv = priv; }
   if (requireCoords) {
     if (!validCoord(p.lat, p.lon)) return null;
@@ -752,7 +752,7 @@ function cleanProfile(p, requireCoords = true, own = false) {
   }
   return out;
 }
-S.profile = cleanProfile(LS.get(K.profile, null), false, true);
+S.profile = (() => { const raw = LS.get(K.profile, null); if (raw && typeof raw === 'object' && raw.intent && raw.intent !== 'partnership') raw.intent = 'partnership'; return cleanProfile(raw, false, true); })();
 
 /* ---------- UI: tabs ---------- */
 function enableTabs() {
@@ -982,7 +982,7 @@ $('#onboard').addEventListener('submit', e => {
     return;
   }
   box.hidden = true;
-  const p = cleanProfile({ handle, photo: S.draftPhoto, tags: S.draftTags, age, ages, pub, priv, faith: 'spiritual', intent: 'marriage' }, false, true);
+  const p = cleanProfile({ handle, photo: S.draftPhoto, tags: S.draftTags, age, ages, pub, priv, faith: 'spiritual', intent: 'partnership' }, false, true);
   if (!p) { toast('Something went wrong validating your profile. Try a different photo.'); return; }
   const first = !S.profile;
   S.profile = p;
