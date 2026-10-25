@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two Clocks</title>
+<meta name="description" content="Zero-login, peer-to-peer local dating for spiritually grounded adults seeking marriage.">
+<meta name="theme-color" content="#1f5d58">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{
+  --bg:#f5f1ea;--surface:#fffdf9;--surface-2:#efe9df;--ink:#1c2628;--muted:#66706f;--line:#e2dacd;
+  --teal:#1f5d58;--teal-ink:#ffffff;--teal-soft:#dfece9;
+  --amber:#a8741f;--amber-soft:#f6ead2;--clay:#b85c38;--clay-soft:#f6e1d7;
+  --danger:#a3261d;--danger-soft:#fbe4e1;
+  --shadow:0 1px 2px rgba(28,38,40,.06),0 10px 28px rgba(28,38,40,.07);
+  --r:18px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111617;--surface:#192021;--surface-2:#222b2c;--ink:#ecebe6;--muted:#9aa3a2;--line:#2e3839;
+    --teal:#56aaa0;--teal-ink:#0b1212;--teal-soft:#1c3431;
+    --amber:#d8a54b;--amber-soft:#382d18;--clay:#e08a63;--clay-soft:#3b251b;
+    --danger:#ef7d72;--danger-soft:#3a1d1a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111617;--surface:#192021;--surface-2:#222b2c;--ink:#ecebe6;--muted:#9aa3a2;--line:#2e3839;
+  --teal:#56aaa0;--teal-ink:#0b1212;--teal-soft:#1c3431;
+  --amber:#d8a54b;--amber-soft:#382d18;--clay:#e08a63;--clay-soft:#3b251b;
+  --danger:#ef7d72;--danger-soft:#3a1d1a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 'DM Sans',system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0}
+p{margin:0}
+.app{max-width:480px;margin:0 auto;padding:16px 16px 48px;min-height:100dvh}
+
+/* Header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:40px;height:40px;flex:none}
+.brand h1{font-size:22px;line-height:1.1}
+.brand p{font-size:12px;color:var(--muted)}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
+.live.on{background:var(--teal-soft);color:var(--teal)}
+.live.on::before{opacity:1;animation:pulse 1.8s infinite}
+.live.wait{background:var(--amber-soft);color:var(--amber)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,currentColor 50%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+
+/* Tabs */
+.tabs{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--surface-2);border-radius:14px;margin-bottom:16px;box-shadow:0 6px 14px -10px rgba(0,0,0,.25)}
+.tab{position:relative;border:0;background:transparent;padding:9px 6px;border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab span{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;background:var(--line);color:var(--muted)}
+.tab.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.tab.active span{background:var(--teal);color:var(--teal-ink)}
+.tab:disabled{opacity:.45;cursor:not-allowed}
+.tab i{position:absolute;top:6px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--clay)}
+
+.view{display:none}
+.view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* Cards & forms */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card-title{display:flex;align-items:center;gap:10px;font-size:19px;margin-bottom:4px}
+.card-title .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--teal-soft);color:var(--teal);font:700 13px 'DM Sans',sans-serif}
+.card-sub{color:var(--muted);font-size:13.5px;margin-bottom:14px}
+fieldset{border:0;margin:14px 0 0;padding:0}
+legend,.label{display:block;font-weight:600;font-size:13.5px;margin-bottom:8px;padding:0}
+.check{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--surface)}
+.check + .check{margin-top:8px}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--teal);flex:none}
+.check small{display:block;color:var(--muted);font-size:12.5px}
+.check:has(input:checked){border-color:var(--teal);background:var(--teal-soft)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.seg label,.pills label{position:relative;cursor:pointer}
+.seg input,.pills input{position:absolute;opacity:0;pointer-events:none}
+.seg span,.pills span{display:block;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-weight:600;font-size:14px;background:var(--surface);transition:.15s}
+.pills span{padding:8px 13px;border-radius:999px;font-size:13.5px;font-weight:500}
+.seg input:checked + span,.pills input:checked + span{background:var(--teal);border-color:var(--teal);color:var(--teal-ink)}
+.seg input:focus-visible + span,.pills input:focus-visible + span{outline:2px solid var(--teal);outline-offset:2px}
+.text{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);outline:none}
+.text:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+
+.photo-row{display:flex;gap:14px;align-items:center}
+.photo-pick{position:relative;width:96px;height:120px;border-radius:16px;border:1.5px dashed var(--line);background:var(--surface-2);display:grid;place-items:center;overflow:hidden;cursor:pointer;flex:none;color:var(--muted);font-size:12px;text-align:center}
+.photo-pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.photo-pick:focus-within{outline:2px solid var(--teal);outline-offset:2px}
+.photo-row .grow{flex:1;min-width:0}
+
+.tagbox{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-height:46px}
+.tagbox:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.tagbox input{flex:1;min-width:110px;border:0;outline:0;background:transparent;padding:4px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--teal-soft);color:var(--teal);font-size:12.5px;font-weight:600;padding:4px 6px 4px 10px;border-radius:999px}
+.chip button{border:0;background:transparent;color:inherit;cursor:pointer;padding:0 4px;font-size:14px;line-height:1}
+.suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.suggest button{border:1px dashed var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:12px;color:var(--muted);cursor:pointer}
+.suggest button:hover{border-color:var(--teal);color:var(--teal)}
+
+.clock{padding:14px 0;border-top:1px solid var(--line)}
+.clock:first-of-type{border-top:0;padding-top:4px}
+.clock-h{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.clock-h b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal)}
+.clock-h strong{font-size:14.5px}
+.clock p{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 18px;font-weight:600;cursor:pointer;background:var(--teal);color:var(--teal-ink);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.block{width:100%;padding:14px}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.soft{background:var(--teal-soft);color:var(--teal)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:10px}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:12.5px;cursor:pointer;padding:6px}
+
+.errors{background:var(--danger-soft);color:var(--danger);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-bottom:12px}
+.errors ul{margin:4px 0 0;padding-left:18px}
+
+.declined{background:var(--surface);border:1.5px solid var(--danger);border-radius:var(--r);padding:24px 20px;text-align:center;box-shadow:var(--shadow);animation:fade .25s ease}
+.declined .ic{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:grid;place-items:center;font:700 26px 'Fraunces',serif}
+.declined h2{color:var(--danger);font-size:24px;margin-bottom:8px}
+.declined p{color:var(--muted);font-size:14px;margin-bottom:16px}
+.banner-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--danger);color:#fff;padding:3px 8px;border-radius:6px;margin-bottom:10px}
+
+/* Radar */
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.muted{color:var(--muted);font-size:13px}
+.fine{color:var(--muted);font-size:12px;margin-top:10px}
+.range{display:block;margin-top:14px}
+.range > span{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:6px}
+.range strong{color:var(--teal)}
+input[type=range]{width:100%;accent-color:var(--teal)}
+.range-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+
+.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:14px}
+.empty h3{color:var(--ink);font-size:18px;margin:10px 0 4px}
+.radar-anim{position:relative;width:120px;height:120px;margin:0 auto}
+.radar-anim span{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--teal);opacity:0;animation:ring 3s infinite}
+.radar-anim span:nth-child(2){animation-delay:1s}
+.radar-anim span:nth-child(3){animation-delay:2s}
+.radar-anim b{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:var(--teal)}
+.radar-anim.idle span{animation:none;opacity:.25}
+.radar-anim.idle span:nth-child(1){inset:40px}
+.radar-anim.idle span:nth-child(2){inset:20px}
+@keyframes ring{0%{transform:scale(.15);opacity:.9}100%{transform:scale(1);opacity:0}}
+
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);animation:fade .25s ease}
+.pcard .ph{position:relative;aspect-ratio:4/4.2;background:var(--surface-2)}
+.pcard .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.score{position:absolute;top:12px;right:12px;background:var(--surface);border-radius:12px;padding:6px 10px;text-align:center;box-shadow:var(--shadow);line-height:1.1}
+.score strong{display:block;font:600 20px 'Fraunces',serif}
+.score span{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.score.hi strong{color:var(--teal)}
+.score.mid strong{color:var(--amber)}
+.score.lo strong{color:var(--clay)}
+.dist-pill{position:absolute;left:12px;bottom:12px;background:rgba(15,20,21,.72);color:#fff;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;backdrop-filter:blur(6px)}
+.pcard .body{padding:14px 16px 16px}
+.pcard h3{font-size:20px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+.tags span{font-size:12px;background:var(--surface-2);padding:3px 9px;border-radius:999px;color:var(--muted);font-weight:500}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.cp{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:var(--surface-2);font-size:12px;line-height:1.3}
+.cp i{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}
+.cp.a i{background:var(--teal)} .cp.n i{background:var(--amber)} .cp.d i{background:var(--clay)}
+.cp b{display:block;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.actions{display:grid;grid-template-columns:1fr 2fr;gap:8px}
+.actions.one{grid-template-columns:1fr}
+.legend{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin:2px 0 12px;flex-wrap:wrap}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* Chat */
+.section-h{font-size:20px;margin:4px 0 12px}
+.match{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);position:relative}
+.match:hover{border-color:var(--teal)}
+.av{position:relative;width:52px;height:52px;flex:none}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.av .dot{position:absolute;right:1px;bottom:1px;width:13px;height:13px;border-radius:50%;background:var(--line);border:2px solid var(--surface)}
+.av .dot.on{background:#2fae6a}
+.mi{flex:1;min-width:0}
+.mi p{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi small{font-size:11.5px;color:var(--clay);font-weight:600;white-space:nowrap}
+.badge{width:10px;height:10px;border-radius:50%;background:var(--clay);flex:none}
+
+.room{display:flex;flex-direction:column;height:calc(100dvh - 150px);min-height:460px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.room-head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.room-head .av{width:40px;height:40px}
+.room-head small{display:block;font-size:12px;color:var(--muted)}
+.back{border:0;background:var(--surface-2);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:18px;line-height:1}
+.intent{margin:10px 12px 0;padding:10px 12px;border-radius:12px;background:var(--amber-soft);color:var(--ink);font-size:12.5px;line-height:1.4}
+.intent .row{justify-content:space-between;margin-bottom:2px}
+.intent strong{font-size:13px}
+.intent .timer{font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+.messages{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px}
+.msg{max-width:78%;padding:8px 12px 6px;border-radius:16px;font-size:14.5px;word-wrap:break-word;overflow-wrap:anywhere;white-space:pre-wrap}
+.msg time{display:block;font-size:10.5px;opacity:.65;text-align:right;margin-top:2px}
+.msg.me{align-self:flex-end;background:var(--teal);color:var(--teal-ink);border-bottom-right-radius:5px}
+.msg.them{align-self:flex-start;background:var(--surface-2);border-bottom-left-radius:5px}
+.sys{align-self:center;text-align:center;font-size:12px;color:var(--muted);max-width:85%;padding:6px 0}
+.composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.composer .text{border-radius:999px}
+.composer .btn{border-radius:999px;padding:10px 18px}
+
+/* Toasts */
+.toasts{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:50;width:min(440px,calc(100% - 32px));pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);padding:11px 14px;border-radius:12px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:fade .2s ease;transition:opacity .3s}
+.toast.match{background:var(--teal);color:var(--teal-ink);font-weight:600}
+.toast.out{opacity:0}
+.foot{text-align:center;margin-top:18px}
+.saved-note{display:flex;gap:10px;align-items:center;background:var(--teal-soft);color:var(--teal);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;margin-bottom:14px}
+@media (max-width:360px){.clocks{grid-template-columns:1fr}.tab{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="15" cy="20" r="11" fill="none" stroke="var(--teal)" stroke-width="2.4"/>
+        <circle cx="25" cy="20" r="11" fill="none" stroke="var(--clay)" stroke-width="2.4"/>
+        <path d="M15 20V13.5M15 20l4 2.5" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M25 20V14M25 20l-3.5 3" stroke="var(--clay)" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <div><h1>Two Clocks</h1><p>No logins · local · peer-to-peer</p></div>
+    </div>
+    <div id="liveBadge" class="live">Offline</div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Steps">
+    <button class="tab active" data-tab="profile" role="tab"><span>1</span>Profile</button>
+    <button class="tab" data-tab="radar" role="tab" disabled><span>2</span>Radar</button>
+    <button class="tab" data-tab="chat" role="tab" disabled><span>3</span>Chat<i id="chatDot" hidden></i></button>
+  </nav>
+
+  <main>
+    <!-- STEP 1 -->
+    <section id="view-profile" class="view active" role="tabpanel">
+      <div id="declined" class="declined" hidden role="alert">
+        <div class="ic">!</div>
+        <span class="banner-tag">Entry declined</span>
+        <h2>This space isn't the right fit</h2>
+        <p>Two Clocks is exclusively for adults who share a spiritual baseline and are seeking marriage or a long-term life partnership. Onboarding has been halted — nothing was saved to this device or broadcast to anyone.</p>
+        <button id="declinedReset" class="btn ghost" type="button">Start over</button>
+      </div>
+
+      <form id="onboard" novalidate>
+        <div id="savedNote" class="saved-note" hidden>✓ Profile saved on this device only. Edit anything below and save again.</div>
+
+        <div class="card">
+          <h2 class="card-title"><span class="num">A</span>The gate</h2>
+          <p class="card-sub">Three confirmations before anything else.</p>
+          <label class="check"><input type="checkbox" id="adult"><span><strong>I am 18 or older</strong><small>Adults only.</small></span></label>
+          <fieldset>
+            <legend>Relationship intent</legend>
+            <label class="check"><input type="checkbox" id="intent"><span><strong>Marriage / Long-term life partnership</strong><small>The only intent this platform supports.</small></span></label>
+          </fieldset>
+          <fieldset>
+            <legend>Faith / spiritual stance</legend>
+            <div class="seg" id="faithSeg">
+              <label><input type="radio" name="faith" value="spiritual"><span>Spiritual</span></label>
+              <label><input type="radio" name="faith" value="non-spiritual"><span>Non-Spiritual</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span class="num">B</span>Your profile</h2>
+          <p class="card-sub">A photo is required. It's compressed on your device before it travels anywhere.</p>
+          <div class="photo-row">
+            <label class="photo-pick" id="photoPick">
+              <span id="photoHint">＋<br>Add photo</span>
+              <img id="photoPreview" alt="Your profile photo" hidden>
+              <input type="file" id="photo" accept="image/*" aria-label="Profile photo">
+            </label>
+            <div class="grow">
+              <label class="label" for="handle">Display handle</label>
+              <input class="text" id="handle" maxlength="24" autocomplete="off" placeholder="e.g. QuietLantern">
+              <p class="hint">2–24 characters. No real names needed.</p>
+            </div>
+          </div>
+          <fieldset>
+            <legend>Core values &amp; interests</legend>
+            <div class="tagbox" id="tagbox">
+              <input id="tagInput" maxlength="24" placeholder="Type and press Enter" autocomplete="off" aria-label="Add a value or interest">
+            </div>
+            <div class="suggest" id="tagSuggest"></div>
+            <p class="hint">Up to 8 tags.</p>
+          </fieldset>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span class="num">C</span>The Two Clocks</h2>
+          <p class="card-sub">How fast do you move, and where are you heading? Matches are scored on the drift between your clocks.</p>
+          <div id="clocks"></div>
+        </div>
+
+        <div id="formErrors" class="errors" hidden role="alert"></div>
+        <button class="btn block" type="submit" id="saveBtn">Save &amp; continue to radar</button>
+        <div class="foot"><button type="button" class="linkbtn" id="wipeBtn" hidden>Delete everything stored on this device</button></div>
+      </form>
+    </section>
+
+    <!-- STEP 2 -->
+    <section id="view-radar" class="view" role="tabpanel">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <h2 class="card-title" style="font-size:18px">Local radar</h2>
+            <p class="muted" id="meshStatus">You're not live yet.</p>
+          </div>
+          <button class="btn sm" id="liveBtn" type="button">Go live</button>
+        </div>
+        <label class="range">
+          <span>Maximum distance <strong id="radiusVal">20 mi</strong></span>
+          <input type="range" id="radius" min="3" max="30" step="1" value="20">
+          <div class="range-scale"><span>3 mi</span><span>30 mi</span></div>
+        </label>
+        <p class="fine">Your position is rounded (~0.7 mi) before it leaves this device. You're only visible while this tab is open and live — there is no "last seen".</p>
+      </div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>Aligned clock</span><span><i style="background:var(--amber)"></i>Slight drift</span><span><i style="background:var(--clay)"></i>Far apart</span></div>
+      <div id="radarEmpty" class="empty">
+        <div class="radar-anim idle" id="radarAnim"><span></span><span></span><span></span><b></b></div>
+        <h3 id="emptyTitle">Not live yet</h3>
+        <p id="emptyText">Go live to appear on the local mesh and see who's nearby right now.</p>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section id="view-chat" class="view" role="tabpanel">
+      <div id="chatList">
+        <h2 class="section-h">Your matches</h2>
+        <div id="matches"></div>
+        <div id="chatEmpty" class="empty">
+          <h3>No matches yet</h3>
+          <p>When you and someone nearby both tap "Interested", a private 72-hour room opens here.</p>
+        </div>
+      </div>
+      <div id="room" class="room" hidden>
+        <div class="room-head">
+          <button class="back" id="backBtn" type="button" aria-label="Back to matches">‹</button>
+          <div class="av"><img id="roomPhoto" alt=""><i class="dot" id="roomDot"></i></div>
+          <div style="flex:1;min-width:0">
+            <strong id="roomName"></strong>
+            <small id="roomStatus"></small>
+          </div>
+        </div>
+        <div class="intent" role="note">
+          <div class="row"><strong>⏳ 72-hour intent window</strong><span class="timer" id="roomTimer"></span></div>
+          This room closes automatically. Use it to agree on a real-world first meeting in a public place.
+        </div>
+        <div class="messages" id="messages" aria-live="polite"></div>
+        <form class="composer" id="composer" autocomplete="off">
+          <input class="text" id="msgInput" maxlength="1000" placeholder="Write a message…">
+          <button class="btn" type="submit" id="sendBtn">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <div class="toasts" id="toasts"></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- Constants ---------- */
+const CLOCKS = [
+  { key:'pace',     n:1, title:'Action pace',     q:'From match to first real-world date, you prefer…',            opts:['24–48 hours','3–5 days','1–2 weeks'],                 w:.25 },
+  { key:'horizon',  n:2, title:'Life horizon',    q:'Your target timeframe for marriage / lifelong commitment…',    opts:['1–2 years','2–4 years','5+ years'],                    w:.35 },
+  { key:'rhythm',   n:3, title:'Daily rhythm',    q:'Your day-to-day calendar is…',                                 opts:['Structured','Fluid'],                                  w:.15 },
+  { key:'conflict', n:4, title:'Conflict tempo',  q:'When tension arises, you prefer to…',                          opts:['Address it immediately','Process alone for 24 hours'], w:.25 },
+];
+const TAG_SUGGESTIONS = ['Faith','Family','Prayer','Service','Honesty','Hospitality','Outdoors','Music','Reading','Travel'];
+const K = { session:'tc_session', profile:'tc_profile', radius:'tc_radius', likes:'tc_likes', hidden:'tc_hidden', chats:'tc_chats' };
+const ROOM_MS = 72 * 3600 * 1000;
+const PREFIX = 'tc-';
+const HUB_PREFIX = 'twoclocks-v1-hub-';
+const MAX_TAGS = 8;
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast('Local storage is full or blocked in this browser.'); return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} }
+};
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+    else if (k === 'class') n.className = v;
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) { if (kid == null || kid === false) continue; n.append(kid instanceof Node ? kid : String(kid)); }
+  return n;
+}
+function uuid() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  const h = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+const clampInt = (v, lo, hi, d) => { v = parseInt(v, 10); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+const validCoord = (lat, lon) => typeof lat === 'number' && typeof lon === 'number' && isFinite(lat) && isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+const fuzz = x => Math.round(x * 100) / 100;
+const fmtDist = d => d < 1 ? '< 1 mi away' : `${d < 10 ? d.toFixed(1) : Math.round(d)} mi away`;
+const hhmm = ts => new Date(ts).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+
+/* Haversine distance in miles */
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 3958.8, rad = x => x * Math.PI / 180;
+  const dLat = rad(lat2 - lat1), dLon = rad(lon2 - lon1);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/* Two Clocks compatibility: weighted temporal drift, 0 = identical, 1 = opposite ends */
+function clockScore(a, b) {
+  let drift = 0; const per = [];
+  for (const c of CLOCKS) {
+    const d = Math.abs(a[c.key] - b[c.key]) / (c.opts.length - 1);
+    per.push(d); drift += c.w * d;
+  }
+  return { score: Math.round(100 * (1 - drift)), per };
+}
+
+/* ---------- Session & state ---------- */
+let session = LS.get(K.session, null);
+if (typeof session !== 'string' || !/^[0-9a-f-]{36}$/i.test(session)) { session = uuid(); LS.set(K.session, session); }
+const MY_ID = PREFIX + session;
+
+function loadChats() {
+  const raw = LS.get(K.chats, {}); const out = {};
+  if (raw && typeof raw === 'object') for (const [id, c] of Object.entries(raw)) {
+    if (c && typeof c.start === 'number' && typeof c.handle === 'string' && Array.isArray(c.msgs)) out[id] = c;
+  }
+  return out;
+}
+
+const S = {
+  profile: null,
+  radius: clampInt(LS.get(K.radius, 20), 3, 30, 20),
+  likes: new Set(LS.get(K.likes, [])),
+  hidden: new Set(LS.get(K.hidden, [])),
+  chats: loadChats(),
+  theirLikes: new Set(),
+  live: false, loc: null,
+  peer: null, hubPeer: null, isHub: false, ownHub: null, hubIds: [],
+  hubConns: new Map(), rosters: new Map(), hubClients: new Map(),
+  direct: new Map(), profiles: new Map(), nearby: new Map(),
+  timers: [], idRetries: 0, tickN: 0,
+  active: null, unread: new Set(),
+  draftPhoto: null, draftTags: [],
+};
+let currentTab = 'profile';
+
+/* ---------- Profile validation (own + incoming) ---------- */
+function cleanProfile(p, requireCoords = true) {
+  if (!p || typeof p !== 'object') return null;
+  const handle = typeof p.handle === 'string' ? p.handle.trim().slice(0, 24) : '';
+  if (handle.length < 2) return null;
+  if (typeof p.photo !== 'string' || p.photo.length > 350000 || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(p.photo)) return null;
+  if (p.faith !== 'spiritual' || p.intent !== 'marriage') return null;
+  const tags = Array.isArray(p.tags) ? p.tags.filter(t => typeof t === 'string').map(t => t.trim().slice(0, 24)).filter(Boolean).slice(0, MAX_TAGS) : [];
+  const clocks = {};
+  for (const c of CLOCKS) {
+    const v = p.clocks && p.clocks[c.key];
+    if (!Number.isInteger(v) || v < 0 || v >= c.opts.length) return null;
+    clocks[c.key] = v;
+  }
+  const out = { handle, photo: p.photo, tags, clocks, faith: 'spiritual', intent: 'marriage' };
+  if (requireCoords) {
+    if (!validCoord(p.lat, p.lon)) return null;
+    out.lat = p.lat; out.lon = p.lon;
+  }
+  return out;
+}
+S.profile = cleanProfile(LS.get(K.profile, null), false);
+
+/* ---------- UI: tabs ---------- */
+function enableTabs() {
+  const ok = !!S.profile;
+  $$('.tab').forEach(t => { if (t.dataset.tab !== 'profile') t.disabled = !ok; });
+  $('#wipeBtn').hidden = !ok;
+  $('#savedNote').hidden = !ok;
+}
+function showTab(t) {
+  const btn = $(`.tab[data-tab="${t}"]`);
+  if (!btn || btn.disabled) return;
+  currentTab = t;
+  $$('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + t));
+  if (t === 'chat') { if (S.active && S.chats[S.active]) showRoom(); else showChatList(); }
+  if (t === 'radar') renderRadar();
+  window.scrollTo({ top: 0 });
+}
+$$('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+/* ---------- Toasts ---------- */
+function toast(msg, kind) {
+  const t = el('div', { class: 'toast ' + (kind || ''), role: 'status' }, msg);
+  $('#toasts').append(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3800);
+}
+
+/* ---------- STEP 1: Onboarding ---------- */
+function buildClocks() {
+  const box = $('#clocks');
+  for (const c of CLOCKS) {
+    box.append(el('fieldset', { class: 'clock' },
+      el('legend', { class: 'clock-h' }, el('b', {}, `Clock ${c.n}`), el('strong', {}, c.title)),
+      el('p', {}, c.q),
+      el('div', { class: 'pills' }, c.opts.map((o, i) =>
+        el('label', {}, el('input', { type: 'radio', name: 'clock-' + c.key, value: String(i) }), el('span', {}, o))
+      ))
+    ));
+  }
+}
+function renderTags() {
+  const box = $('#tagbox'), input = $('#tagInput');
+  box.querySelectorAll('.chip').forEach(c => c.remove());
+  S.draftTags.forEach((t, i) => box.insertBefore(
+    el('span', { class: 'chip' }, t, el('button', { type: 'button', 'aria-label': `Remove ${t}`, onclick: () => { S.draftTags.splice(i, 1); renderTags(); } }, '×')),
+    input));
+  input.disabled = S.draftTags.length >= MAX_TAGS;
+  input.placeholder = S.draftTags.length >= MAX_TAGS ? 'Tag limit reached' : 'Type and press Enter';
+  const sug = $('#tagSuggest'); sug.replaceChildren();
+  TAG_SUGGESTIONS.filter(s => !S.draftTags.some(t => t.toLowerCase() === s.toLowerCase())).slice(0, 6)
+    .forEach(s => sug.append(el('button', { type: 'button', onclick: () => addTag(s) }, '+ ' + s)));
+}
+function addTag(raw) {
+  const t = raw.replace(/,/g, ' ').trim().slice(0, 24);
+  if (!t || S.draftTags.length >= MAX_TAGS) return;
+  if (S.draftTags.some(x => x.toLowerCase() === t.toLowerCase())) return;
+  S.draftTags.push(t); renderTags();
+}
+$('#tagInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(e.target.value); e.target.value = ''; }
+  else if (e.key === 'Backspace' && !e.target.value && S.draftTags.length) { S.draftTags.pop(); renderTags(); }
+});
+$('#tagInput').addEventListener('blur', e => { if (e.target.value.trim()) { addTag(e.target.value); e.target.value = ''; } });
+
+/* Photo → canvas → JPEG base64 (max 400px wide, quality 0.7) */
+function compressPhoto(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !/^image\//.test(file.type)) return reject(new Error('Please choose an image file.'));
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 400 / img.naturalWidth, 600 / img.naturalHeight);
+      const w = Math.max(1, Math.round(img.naturalWidth * scale));
+      const h = Math.max(1, Math.round(img.naturalHeight * scale));
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL('image/jpeg', 0.7));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That image could not be read. Try a JPEG or PNG.')); };
+    img.src = url;
+  });
+}
+function setPhotoPreview(src) {
+  const img = $('#photoPreview');
+  if (src) { img.src = src; img.hidden = false; $('#photoHint').hidden = true; }
+  else { img.removeAttribute('src'); img.hidden = true; $('#photoHint').hidden = false; }
+}
+$('#photo').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  try {
+    S.draftPhoto = await compressPhoto(f);
+    setPhotoPreview(S.draftPhoto);
+    toast(`Photo compressed to ${Math.round(S.draftPhoto.length * 0.75 / 1024)} KB.`);
+  } catch (err) { toast(err.message); }
+  e.target.value = '';
+});
+
+/* Faith hard gate */
+function declineEntry() {
+  teardown();
+  if (S.profile) { S.profile = null; LS.del(K.profile); }
+  S.active = null;
+  enableTabs();
+  setLiveUI('off');
+  $('#onboard').hidden = true;
+  $('#declined').hidden = false;
+  window.scrollTo({ top: 0 });
+}
+$$('input[name="faith"]').forEach(r => r.addEventListener('change', () => { if (r.checked && r.value === 'non-spiritual') declineEntry(); }));
+$('#declinedReset').addEventListener('click', () => {
+  $('#onboard').reset();
+  S.draftPhoto = null; S.draftTags = [];
+  setPhotoPreview(null); renderTags();
+  $('#formErrors').hidden = true;
+  $('#declined').hidden = true;
+  $('#onboard').hidden = false;
+});
+
+function fillForm(p) {
+  $('#adult').checked = true;
+  $('#intent').checked = true;
+  $('input[name="faith"][value="spiritual"]').checked = true;
+  $('#handle').value = p.handle;
+  S.draftPhoto = p.photo; setPhotoPreview(p.photo);
+  S.draftTags = p.tags.slice(); renderTags();
+  for (const c of CLOCKS) { const r = $(`input[name="clock-${c.key}"][value="${p.clocks[c.key]}"]`); if (r) r.checked = true; }
+}
+
+$('#onboard').addEventListener('submit', e => {
+  e.preventDefault();
+  const errs = [];
+  const faith = ($('input[name="faith"]:checked') || {}).value;
+  if (faith === 'non-spiritual') { declineEntry(); return; }
+  if (!$('#adult').checked) errs.push('Confirm you are 18 or older.');
+  if (!$('#intent').checked) errs.push('Confirm you are seeking marriage / a long-term life partnership.');
+  if (faith !== 'spiritual') errs.push('Choose your faith / spiritual stance.');
+  if (!S.draftPhoto) errs.push('Add a profile photo — it is required.');
+  const handle = $('#handle').value.trim();
+  if (handle.length < 2) errs.push('Enter a display handle (at least 2 characters).');
+  const pending = $('#tagInput').value.trim(); if (pending) { addTag(pending); $('#tagInput').value = ''; }
+  if (!S.draftTags.length) errs.push('Add at least one core value or interest.');
+  const clocks = {};
+  for (const c of CLOCKS) {
+    const r = $(`input[name="clock-${c.key}"]:checked`);
+    if (!r) errs.push(`Answer Clock ${c.n}: ${c.title}.`); else clocks[c.key] = +r.value;
+  }
+  const box = $('#formErrors');
+  if (errs.length) {
+    box.replaceChildren(el('strong', {}, 'A few things are missing:'), el('ul', {}, errs.map(x => el('li', {}, x))));
+    box.hidden = false; box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  box.hidden = true;
+  const p = cleanProfile({ handle, photo: S.draftPhoto, tags: S.draftTags, clocks, faith: 'spiritual', intent: 'marriage' }, false);
+  if (!p) { toast('Something went wrong validating your profile. Try a different photo.'); return; }
+  const first = !S.profile;
+  S.profile = p;
+  if (!LS.set(K.profile, p)) return;
+  enableTabs();
+  // Rescore and re-broadcast to anyone already connected
+  for (const [id, x] of S.profiles) { const r = clockScore(p.clocks, x.p.clocks); x.score = r.score; x.per = r.per; }
+  if (S.live) for (const e of S.direct.values()) if (e.open) sendProfile(e.conn);
+  toast(first ? 'Profile saved on this device. Welcome.' : 'Profile updated.');
+  showTab('radar');
+});
+
+$('#wipeBtn').addEventListener('click', () => {
+  if (!confirm('Delete your profile, matches, messages and anonymous session key from this device? This cannot be undone.')) return;
+  teardown();
+  Object.values(K).forEach(k => LS.del(k));
+  location.reload();
+});
+
+/* ---------- STEP 2: Geolocation + P2P mesh ---------- */
+function setLiveUI(state) {
+  const b = $('#liveBadge'), btn = $('#liveBtn'), anim = $('#radarAnim');
+  b.className = 'live' + (state === 'live' ? ' on' : (state === 'locating' || state === 'connecting') ? ' wait' : '');
+  b.textContent = { off: 'Offline', locating: 'Locating…', connecting: 'Connecting…', live: 'Live' }[state] || 'Offline';
+  btn.textContent = state === 'off' ? 'Go live' : 'Go offline';
+  btn.disabled = state === 'locating';
+  anim.classList.toggle('idle', state === 'off');
+}
+function setStatus(t) { $('#meshStatus').textContent = t; }
+function updateStatus() {
+  if (!S.live) return;
+  const linked = [...S.hubConns.values()].filter(e => e.open).length;
+  const onMesh = [...S.nearby.keys()].filter(id => id !== MY_ID).length;
+  const shown = visibleProfiles().length;
+  setStatus(`Live · ${linked}/${S.hubIds.length} mesh cells linked${S.isHub ? ' · relaying your area' : ''} · ${onMesh} on mesh, ${shown} within ${S.radius} mi`);
+}
+function geoErr(e) {
+  const fileHint = location.protocol === 'file:' ? ' Some browsers block location for local files — serve this page over https or http://localhost.' : '';
+  if (e && e.code === 1) return 'Location permission was denied. Two Clocks needs it to filter by distance (it is rounded before sharing).' + fileHint;
+  if (e && e.code === 3) return 'Locating took too long. Try again.' + fileHint;
+  return 'Your location could not be determined.' + fileHint;
+}
+
+async function goLive() {
+  if (S.live) return;
+  if (!S.profile) { showTab('profile'); return; }
+  if (typeof window.Peer === 'undefined') { setStatus('The PeerJS library failed to load — check your internet connection and reload.'); return; }
+  if (!navigator.geolocation) { setStatus('This browser does not support geolocation.'); return; }
+  setLiveUI('locating'); setStatus('Requesting your location…');
+  let pos;
+  try {
+    pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }));
+  } catch (err) { setLiveUI('off'); setStatus(geoErr(err)); renderRadar(); return; }
+  S.loc = { lat: fuzz(pos.coords.latitude), lon: fuzz(pos.coords.longitude) };
+  computeHubs();
+  S.live = true; S.idRetries = 0;
+  setLiveUI('connecting'); setStatus('Joining the local mesh…');
+  startPeer();
+  renderRadar();
+}
+function goOffline() { teardown(); setLiveUI('off'); setStatus("You're offline and invisible. Go live to appear on the radar."); renderRadar(); renderMatches(); renderRoomHeader(); }
+$('#liveBtn').addEventListener('click', () => S.live ? goOffline() : goLive());
+
+/* Coarse 1° geocells: each cell has one "hub" peer (first tab to claim the ID) that relays a presence roster.
+   We link to the hubs of our cell + 8 neighbours so a 30-mile radius is covered across cell edges. */
+function hubIdFor(a, b) { const e = n => (n < 0 ? 's' : 'n') + Math.abs(n); return HUB_PREFIX + e(a) + '_' + e(b); }
+function wrapLon(x) { return ((x + 180) % 360 + 360) % 360 - 180; }
+function computeHubs() {
+  const a = Math.floor(S.loc.lat), b = Math.floor(S.loc.lon);
+  S.ownHub = hubIdFor(a, b);
+  const ids = new Set();
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+    const la = a + i; if (la < -90 || la > 89) continue;
+    ids.add(hubIdFor(la, wrapLon(b + j)));
+  }
+  S.hubIds = [...ids];
+}
+
+function startPeer() {
+  const p = new Peer(MY_ID, { debug: 0 });
+  S.peer = p;
+  p.on('open', () => {
+    if (S.peer !== p) return;
+    S.idRetries = 0;
+    setLiveUI('live');
+    tryClaimHub();
+    setTimeout(connectHubs, 1500);
+    startTimers();
+    updateStatus();
+  });
+  p.on('connection', onIncoming);
+  p.on('disconnected', () => {
+    setTimeout(() => { if (S.peer === p && !p.destroyed && p.disconnected) { try { p.reconnect(); } catch {} } }, 1200);
+  });
+  p.on('error', err => {
+    if (S.peer !== p) return;
+    const t = err && err.type;
+    if (t === 'peer-unavailable') {
+      const m = /peer\s+(\S+)/i.exec((err && err.message) || '');
+      if (m) { const id = m[1]; if (S.hubConns.has(id)) dropHub(id); else if (S.direct.has(id)) closeDirect(id); }
+      return;
+    }
+    if (t === 'unavailable-id') {
+      try { p.destroy(); } catch {}
+      S.peer = null;
+      if (S.idRetries++ < 5) { setStatus('Reclaiming your anonymous ID…'); setTimeout(() => { if (S.live && !S.peer) startPeer(); }, 3000); }
+      else { goOffline(); setStatus('Your profile appears to be live in another tab. Close it, then try again.'); }
+      return;
+    }
+    if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(t)) { setStatus('Signal lost — retrying…'); return; }
+    console.warn('[peer]', t, err);
+  });
+}
+
+function tryClaimHub() {
+  if (!S.live || S.hubPeer || !S.ownHub) return;
+  const hp = new Peer(S.ownHub, { debug: 0 });
+  S.hubPeer = hp;
+  hp.on('open', () => { if (S.hubPeer !== hp) return; S.isHub = true; updateStatus(); connectHubs(); });
+  hp.on('connection', c => hubAccept(hp, c));
+  hp.on('error', err => { if (S.hubPeer !== hp) return; if ((err && err.type) === 'unavailable-id' || !S.isHub) releaseHub(); });
+  hp.on('disconnected', () => {
+    setTimeout(() => { if (S.hubPeer === hp && !hp.destroyed && hp.disconnected) { try { hp.reconnect(); } catch {} } }, 1200);
+  });
+}
+function releaseHub() {
+  const hp = S.hubPeer;
+  S.hubPeer = null; S.isHub = false;
+  const clients = [...S.hubClients.values()]; S.hubClients.clear();
+  clients.forEach(v => { try { v.conn.close(); } catch {} });
+  if (hp) { try { hp.destroy(); } catch {} }
+}
+
+/* Hub side: keep a presence roster (id + rounded coords only — no photos, no names) */
+function hubAccept(hp, conn) {
+  if (S.hubPeer !== hp || typeof conn.peer !== 'string' || !conn.peer.startsWith(PREFIX)) { setTimeout(() => { try { conn.close(); } catch {} }, 0); return; }
+  conn.on('data', d => {
+    if (S.hubPeer !== hp || !d || d.type !== 'announce' || !validCoord(d.lat, d.lon)) return;
+    const prev = S.hubClients.get(conn.peer);
+    const changed = !prev || prev.conn !== conn || prev.lat !== d.lat || prev.lon !== d.lon;
+    S.hubClients.set(conn.peer, { conn, lat: d.lat, lon: d.lon, seen: Date.now() });
+    if (prev && prev.conn !== conn) { try { prev.conn.close(); } catch {} }
+    if (changed) queueRoster();
+  });
+  const drop = () => { const e = S.hubClients.get(conn.peer); if (e && e.conn === conn) { S.hubClients.delete(conn.peer); queueRoster(); } };
+  conn.on('close', drop); conn.on('error', drop);
+}
+let rosterTimer = null;
+function queueRoster() { clearTimeout(rosterTimer); rosterTimer = setTimeout(sendRoster, 250); }
+function sendRoster() {
+  const peers = [...S.hubClients.entries()].slice(0, 400).map(([id, v]) => ({ id, lat: v.lat, lon: v.lon }));
+  for (const v of S.hubClients.values()) if (v.conn.open) { try { v.conn.send({ type: 'roster', peers }); } catch {} }
+}
+
+/* Client side: link to the 9 nearby hubs */
+function connectHubs() {
+  if (!S.live || !S.peer || !S.peer.open) return;
+  for (const id of S.hubIds) {
+    if (S.hubConns.has(id)) continue;
+    let c;
+    try { c = S.peer.connect(id, { reliable: true, metadata: { k: 'hub' } }); } catch { continue; }
+    if (!c) continue;
+    const entry = { conn: c, open: false, t: Date.now() };
+    S.hubConns.set(id, entry);
+    c.on('open', () => { if (S.hubConns.get(id) !== entry) return; entry.open = true; announce(c); updateStatus(); });
+    c.on('data', d => {
+      if (S.hubConns.get(id) !== entry || !d || d.type !== 'roster' || !Array.isArray(d.peers)) return;
+      const m = new Map();
+      for (const x of d.peers.slice(0, 400)) {
+        if (x && typeof x.id === 'string' && x.id.startsWith(PREFIX) && x.id.length < 80 && validCoord(x.lat, x.lon)) m.set(x.id, { lat: x.lat, lon: x.lon });
+      }
+      S.rosters.set(id, m);
+      reconcile();
+    });
+    const end = () => { if (S.hubConns.get(id) === entry) dropHub(id); };
+    c.on('close', end); c.on('error', end);
+  }
+}
+function dropHub(id) {
+  const e = S.hubConns.get(id);
+  S.hubConns.delete(id); S.rosters.delete(id);
+  if (e) { try { e.conn.close(); } catch {} }
+  reconcile(); updateStatus();
+  if (id === S.ownHub && !S.isHub && S.live) {
+    // The hub for our area left (or never existed): race to take over after a random jitter.
+    setTimeout(() => { tryClaimHub(); setTimeout(connectHubs, 1500); }, 400 + Math.random() * 2600);
+  }
+}
+function announce(c) { if (c && c.open && S.loc) { try { c.send({ type: 'announce', lat: S.loc.lat, lon: S.loc.lon }); } catch {} } }
+
+/* Decide who to open direct DataChannels with */
+function reconcile() {
+  const all = new Map();
+  for (const m of S.rosters.values()) for (const [id, v] of m) all.set(id, v);
+  S.nearby = all;
+  if (S.live && S.peer && S.peer.open && S.loc) {
+    for (const [id, v] of all) {
+      if (id === MY_ID || S.hidden.has(id) || S.direct.has(id)) continue;
+      // Only the lexicographically smaller ID dials, to avoid duplicate channels.
+      if (MY_ID < id && haversine(S.loc.lat, S.loc.lon, v.lat, v.lon) <= S.radius) connectDirect(id);
+    }
+  }
+  renderRadar(); updateStatus();
+}
+
+/* Direct device-to-device channel (WebRTC DataChannel, DTLS-encrypted) */
+function connectDirect(id) {
+  let c;
+  try { c = S.peer.connect(id, { reliable: true, metadata: { k: 'direct' } }); } catch { return; }
+  if (c) setupDirect(c);
+}
+function onIncoming(c) {
+  const k = c.metadata && c.metadata.k;
+  if (!S.live || k !== 'direct' || typeof c.peer !== 'string' || !c.peer.startsWith(PREFIX) || S.hidden.has(c.peer)) {
+    setTimeout(() => { try { c.close(); } catch {} }, 0); return;
+  }
+  setupDirect(c);
+}
+function setupDirect(c) {
+  const id = c.peer;
+  const old = S.direct.get(id);
+  const entry = { conn: c, open: false, t: Date.now() };
+  S.direct.set(id, entry);
+  if (old && old.conn !== c) { try { old.conn.close(); } catch {} }
+  c.on('open', () => {
+    if (S.direct.get(id) !== entry) return;
+    entry.open = true;
+    sendProfile(c);
+    if (S.likes.has(id)) safeSend(c, { type: 'interest', on: true });
+    renderMatches(); renderRoomHeader();
+  });
+  c.on('data', d => { if (S.direct.get(id) === entry) onDirectData(id, d); });
+  const end = () => {
+    if (S.direct.get(id) !== entry) return;
+    S.direct.delete(id); S.profiles.delete(id); S.theirLikes.delete(id);
+    renderRadar(); renderMatches(); renderRoomHeader(); updateStatus();
+  };
+  c.on('close', end); c.on('error', end);
+}
+function closeDirect(id) {
+  const e = S.direct.get(id);
+  S.direct.delete(id); S.profiles.delete(id); S.theirLikes.delete(id);
+  if (e) { try { e.conn.close(); } catch {} }
+}
+function safeSend(c, msg) { if (!c || !c.open) return false; try { c.send(msg); return true; } catch { return false; } }
+function sendProfile(c) {
+  if (!S.profile || !S.loc) return;
+  safeSend(c, { type: 'profile', profile: { ...S.profile, lat: S.loc.lat, lon: S.loc.lon } });
+}
+
+function onDirectData(id, d) {
+  if (!d || typeof d !== 'object' || !S.profile) return;
+  if (d.type === 'profile') {
+    const p = cleanProfile(d.profile, true);
+    if (!p) { closeDirect(id); renderRadar(); return; }
+    const dist = haversine(S.loc.lat, S.loc.lon, p.lat, p.lon);
+    const r = clockScore(S.profile.clocks, p.clocks);
+    S.profiles.set(id, { p, dist, score: r.score, per: r.per });
+    if (S.chats[id]) { S.chats[id].handle = p.handle; S.chats[id].photo = p.photo; saveChats(); }
+    checkMatch(id);
+    renderRadar(); renderMatches(); renderRoomHeader(); updateStatus();
+  } else if (d.type === 'interest') {
+    if (d.on === true) S.theirLikes.add(id); else S.theirLikes.delete(id);
+    checkMatch(id); renderRadar();
+  } else if (d.type === 'msg') {
+    const ch = S.chats[id];
+    if (!ch || isExpired(ch) || typeof d.text !== 'string') return;
+    const text = d.text.slice(0, 1000).trim(); if (!text) return;
+    const mid = typeof d.id === 'string' ? d.id.slice(0, 64) : uuid();
+    if (ch.msgs.some(m => m.id === mid)) return;
+    ch.msgs.push({ id: mid, me: false, text, ts: Date.now() });
+    trimMsgs(ch); saveChats();
+    if (S.active === id && currentTab === 'chat' && !$('#room').hidden) renderMessages();
+    else { S.unread.add(id); updateChatDot(); toast(`New message from ${ch.handle}`); }
+    renderMatches();
+  }
+}
+
+/* ---------- Interest, matching, passing ---------- */
+function checkMatch(id) {
+  if (S.chats[id] || !S.likes.has(id) || !S.theirLikes.has(id)) return;
+  const pr = S.profiles.get(id); if (!pr) return;
+  S.chats[id] = { start: Date.now(), handle: pr.p.handle, photo: pr.p.photo, msgs: [] };
+  saveChats();
+  toast(`It's a match with ${pr.p.handle}! Your 72-hour window has started.`, 'match');
+  S.unread.add(id); updateChatDot(); renderMatches();
+}
+function toggleLike(id) {
+  const e = S.direct.get(id);
+  if (S.likes.has(id)) { S.likes.delete(id); safeSend(e && e.conn, { type: 'interest', on: false }); }
+  else {
+    S.likes.add(id); safeSend(e && e.conn, { type: 'interest', on: true });
+    const pr = S.profiles.get(id);
+    if (pr && !S.theirLikes.has(id)) toast(`Interest sent to ${pr.p.handle}. If it's mutual, a chat opens.`);
+    checkMatch(id);
+  }
+  LS.set(K.likes, [...S.likes]);
+  renderRadar();
+}
+function pass(id) {
+  const pr = S.profiles.get(id);
+  S.hidden.add(id); S.likes.delete(id);
+  LS.set(K.hidden, [...S.hidden]); LS.set(K.likes, [...S.likes]);
+  closeDirect(id); renderRadar(); updateStatus();
+  toast(`Passed${pr ? ' on ' + pr.p.handle : ''}. They won't appear on this device again.`);
+}
+
+/* ---------- Radar rendering ---------- */
+function visibleProfiles() {
+  return [...S.profiles.entries()]
+    .filter(([id, x]) => !S.hidden.has(id) && x.dist <= S.radius)
+    .sort((a, b) => b[1].score - a[1].score || a[1].dist - b[1].dist);
+}
+const tier = s => s >= 80 ? 'hi' : s >= 60 ? 'mid' : 'lo';
+function profileCard(id, x) {
+  const matched = !!S.chats[id], liked = S.likes.has(id);
+  const pips = CLOCKS.map((c, i) => {
+    const d = x.per[i];
+    return el('div', { class: 'cp ' + (d === 0 ? 'a' : d <= .5 ? 'n' : 'd'), title: `Your answer: ${c.opts[S.profile.clocks[c.key]]}` },
+      el('i'), el('div', {}, el('b', {}, c.title), c.opts[x.p.clocks[c.key]]));
+  });
+  const actions = matched
+    ? el('div', { class: 'actions one' }, el('button', { class: 'btn', type: 'button', onclick: () => openChat(id) }, 'Open chat'))
+    : el('div', { class: 'actions' },
+        el('button', { class: 'btn ghost', type: 'button', onclick: () => pass(id) }, 'Pass'),
+        el('button', { class: 'btn' + (liked ? ' soft' : ''), type: 'button', 'aria-pressed': liked ? 'true' : 'false', onclick: () => toggleLike(id) }, liked ? '✓ Interest sent' : 'Interested'));
+  return el('article', { class: 'pcard' },
+    el('div', { class: 'ph' },
+      el('img', { src: x.p.photo, alt: `Photo of ${x.p.handle}`, loading: 'lazy' }),
+      el('div', { class: 'score ' + tier(x.score) }, el('strong', {}, x.score + '%'), el('span', {}, 'Two Clocks')),
+      el('span', { class: 'dist-pill' }, fmtDist(x.dist))),
+    el('div', { class: 'body' },
+      el('h3', {}, x.p.handle),
+      x.p.tags.length ? el('div', { class: 'tags' }, x.p.tags.map(t => el('span', {}, t))) : null,
+      el('div', { class: 'clocks', style: 'margin-bottom:14px' }, pips),
+      actions));
+}
+function renderRadar() {
+  const grid = $('#grid'); grid.replaceChildren();
+  const list = S.live && S.profile ? visibleProfiles() : [];
+  list.forEach(([id, x]) => grid.append(profileCard(id, x)));
+  $('#radarEmpty').hidden = list.length > 0;
+  if (!S.live) { $('#emptyTitle').textContent = 'Not live yet'; $('#emptyText').textContent = 'Go live to appear on the local mesh and see who\'s nearby right now.'; }
+  else { $('#emptyTitle').textContent = 'Scanning nearby…'; $('#emptyText').textContent = `No one within ${S.radius} miles has this page open right now. People appear here the moment they go live — try widening your radius or check back later.`; }
+}
+const radius = $('#radius');
+radius.value = S.radius; $('#radiusVal').textContent = S.radius + ' mi';
+radius.addEventListener('input', () => { S.radius = +radius.value; $('#radiusVal').textContent = S.radius + ' mi'; renderRadar(); updateStatus(); });
+radius.addEventListener('change', () => { LS.set(K.radius, S.radius); reconcile(); });
+
+/* ---------- STEP 3: Chat ---------- */
+function saveChats() { LS.set(K.chats, S.chats); }
+function trimMsgs(ch) { if (ch.msgs.length > 500) ch.msgs.splice(0, ch.msgs.length - 500); }
+const isExpired = ch => Date.now() - ch.start >= ROOM_MS;
+function timeLeft(ch) {
+  const ms = Math.max(0, ROOM_MS - (Date.now() - ch.start));
+  const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000), s = Math.floor(ms % 60000 / 1000);
+  if (h >= 24) return `${Math.floor(h / 24)}d ${h % 24}h left`;
+  if (h >= 1) return `${h}h ${String(m).padStart(2, '0')}m left`;
+  return `${m}m ${String(s).padStart(2, '0')}s left`;
+}
+const isOnline = id => { const e = S.direct.get(id); return !!(e && e.open); };
+function updateChatDot() { $('#chatDot').hidden = S.unread.size === 0; }
+
+function purgeExpired() {
+  let changed = false;
+  for (const [id, ch] of Object.entries(S.chats)) {
+    if (!isExpired(ch)) continue;
+    delete S.chats[id]; S.unread.delete(id);
+    S.hidden.add(id); S.likes.delete(id);
+    closeDirect(id); changed = true;
+    if (S.active === id) { S.active = null; if (currentTab === 'chat') showChatList(); }
+    toast(`Your 72-hour room with ${ch.handle} has closed.`);
+  }
+  if (changed) { saveChats(); LS.set(K.hidden, [...S.hidden]); LS.set(K.likes, [...S.likes]); updateChatDot(); renderMatches(); renderRadar(); }
+}
+
+function renderMatches() {
+  const box = $('#matches'); box.replaceChildren();
+  const ids = Object.keys(S.chats).sort((a, b) => {
+    const la = S.chats[a].msgs.at(-1)?.ts || S.chats[a].start, lb = S.chats[b].msgs.at(-1)?.ts || S.chats[b].start;
+    return lb - la;
+  });
+  $('#chatEmpty').hidden = ids.length > 0;
+  for (const id of ids) {
+    const ch = S.chats[id], last = ch.msgs.at(-1);
+    box.append(el('button', { class: 'match', type: 'button', onclick: () => openChat(id) },
+      el('div', { class: 'av' }, el('img', { src: ch.photo, alt: '' }), el('i', { class: 'dot' + (isOnline(id) ? ' on' : '') })),
+      el('div', { class: 'mi' },
+        el('div', { class: 'row between' }, el('strong', {}, ch.handle), el('small', {}, timeLeft(ch))),
+        el('p', {}, last ? (last.me ? 'You: ' : '') + last.text : (isOnline(id) ? 'Matched — say hello and plan a meeting.' : 'Matched · offline right now'))),
+      S.unread.has(id) ? el('span', { class: 'badge', 'aria-label': 'Unread' }) : null));
+  }
+}
+function openChat(id) {
+  if (!S.chats[id]) return;
+  S.active = id;
+  if ($(`.tab[data-tab="chat"]`).disabled) return;
+  showTab('chat');
+}
+function showChatList() { $('#room').hidden = true; $('#chatList').hidden = false; renderMatches(); }
+function showRoom() {
+  const id = S.active; if (!id || !S.chats[id]) { showChatList(); return; }
+  S.unread.delete(id); updateChatDot();
+  $('#chatList').hidden = true; $('#room').hidden = false;
+  renderRoomHeader(); renderMessages();
+  setTimeout(() => $('#msgInput').focus(), 50);
+}
+function renderRoomHeader() {
+  const id = S.active, ch = id && S.chats[id];
+  if (!ch) return;
+  const on = isOnline(id);
+  $('#roomPhoto').src = ch.photo;
+  $('#roomName').textContent = ch.handle;
+  $('#roomDot').className = 'dot' + (on ? ' on' : '');
+  $('#roomStatus').textContent = on ? 'Online · direct P2P · DTLS-encrypted · no server copy' : (S.live ? 'Offline — messages send only while you are both here' : 'You are offline — go live on the radar to chat');
+  $('#roomTimer').textContent = timeLeft(ch);
+  $('#msgInput').disabled = !on; $('#sendBtn').disabled = !on;
+  $('#msgInput').placeholder = on ? 'Write a message…' : 'Waiting for both of you to be online…';
+}
+function renderMessages() {
+  const id = S.active, ch = id && S.chats[id]; if (!ch) return;
+  const box = $('#messages'); box.replaceChildren();
+  box.append(el('div', { class: 'sys' }, `You matched with ${ch.handle} on ${new Date(ch.start).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}. Messages travel device-to-device and are kept only in this browser until the room closes.`));
+  for (const m of ch.msgs) box.append(el('div', { class: 'msg ' + (m.me ? 'me' : 'them') }, m.text, el('time', {}, hhmm(m.ts))));
+  box.scrollTop = box.scrollHeight;
+}
+$('#backBtn').addEventListener('click', () => { S.active = null; showChatList(); });
+$('#composer').addEventListener('submit', e => {
+  e.preventDefault();
+  const id = S.active, ch = id && S.chats[id];
+  const input = $('#msgInput'); const text = input.value.trim();
+  if (!ch || !text) return;
+  if (isExpired(ch)) { purgeExpired(); return; }
+  const entry = S.direct.get(id);
+  if (!entry || !entry.open) { toast(`${ch.handle} is offline right now.`); return; }
+  const m = { id: uuid(), me: true, text: text.slice(0, 1000), ts: Date.now() };
+  if (!safeSend(entry.conn, { type: 'msg', id: m.id, text: m.text })) { toast('Message failed to send.'); return; }
+  ch.msgs.push(m); trimMsgs(ch); saveChats();
+  input.value = '';
+  renderMessages();
+});
+
+/* ---------- Timers & lifecycle ---------- */
+function startTimers() {
+  S.timers.forEach(t => clearInterval(t)); S.timers = [];
+  S.timers.push(setInterval(() => {
+    if (!S.live) return;
+    S.tickN++;
+    const now = Date.now();
+    // Drop half-open hub / direct attempts so they can be retried
+    for (const [id, e] of S.hubConns) if (!e.open && now - e.t > 12000) dropHub(id);
+    for (const [id, e] of S.direct) if (!e.open && now - e.t > 15000) closeDirect(id);
+    // Hub housekeeping: forget silent clients
+    if (S.isHub) {
+      let changed = false;
+      for (const [id, v] of S.hubClients) if (now - v.seen > 65000) { S.hubClients.delete(id); try { v.conn.close(); } catch {} changed = true; }
+      if (changed) queueRoster();
+    }
+    // Heartbeat presence every ~20 s
+    if (S.tickN % 2 === 0) for (const e of S.hubConns.values()) if (e.open) announce(e.conn);
+    const own = S.hubConns.get(S.ownHub);
+    if (!S.isHub && !(own && own.open)) tryClaimHub();
+    connectHubs();
+    reconcile();
+  }, 10000));
+}
+function teardown() {
+  S.live = false;
+  S.timers.forEach(t => clearInterval(t)); S.timers = [];
+  clearTimeout(rosterTimer);
+  releaseHub();
+  const hubs = [...S.hubConns.values()], directs = [...S.direct.values()];
+  S.hubConns.clear(); S.rosters.clear(); S.direct.clear(); S.profiles.clear(); S.theirLikes.clear(); S.nearby = new Map();
+  hubs.forEach(e => { try { e.conn.close(); } catch {} });
+  directs.forEach(e => { try { e.conn.close(); } catch {} });
+  if (S.peer) { try { S.peer.destroy(); } catch {} }
+  S.peer = null;
+}
+window.addEventListener('pagehide', teardown);
+window.addEventListener('beforeunload', teardown);
+
+// 1-second UI clock for the 72-hour countdown, plus expiry checks
+setInterval(() => {
+  if (S.active && S.chats[S.active] && !$('#room').hidden) $('#roomTimer').textContent = timeLeft(S.chats[S.active]);
+}, 1000);
+setInterval(() => { purgeExpired(); if (currentTab === 'chat' && $('#room').hidden) renderMatches(); }, 30000);
+
+/* ---------- Boot ---------- */
+buildClocks();
+renderTags();
+purgeExpired();
+if (S.profile) fillForm(S.profile);
+enableTabs();
+setLiveUI('off');
+renderRadar(); renderMatches();
+if (S.profile) {
+  showTab('radar');
+  // Auto-rejoin only if location permission was already granted (never prompt without a tap).
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'geolocation' }).then(r => { if (r.state === 'granted') goLive(); }).catch(() => {});
+  }
+}
+})();
+</script>
+</body>
+</html>
