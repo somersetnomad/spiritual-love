@@ -109,6 +109,22 @@ legend,.label{display:block;font-weight:600;font-size:13.5px;margin-bottom:8px;p
 .tagbox input{flex:1;min-width:110px;border:0;outline:0;background:transparent;padding:4px}
 .chip{display:inline-flex;align-items:center;gap:4px;background:var(--teal-soft);color:var(--teal);font-size:12.5px;font-weight:600;padding:4px 6px 4px 10px;border-radius:999px}
 .chip button{border:0;background:transparent;color:inherit;cursor:pointer;padding:0 4px;font-size:14px;line-height:1}
+.picker{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.picker-search{display:flex;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line)}
+.picker-search input{flex:1;border:0;outline:0;background:transparent;padding:4px 2px;min-width:0}
+.picker-count{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.picker-count.ok{color:var(--teal)}
+.picker-body{max-height:340px;overflow:auto;padding:4px 10px 10px}
+.picker-cat{margin-top:10px}
+.picker-cat > b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.ichips{display:flex;flex-wrap:wrap;gap:6px}
+.ichip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;transition:.12s}
+.ichip:hover{border-color:var(--teal)}
+.ichip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--teal-ink)}
+.ichip:disabled{opacity:.4;cursor:not-allowed}
+.agegrid{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start;margin-top:14px}
+.agegrid .text{text-align:center}
+.tags span.shared{background:var(--teal-soft);color:var(--teal);font-weight:600}
 .suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .suggest button{border:1px dashed var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:12px;color:var(--muted);cursor:pointer}
 .suggest button:hover{border-color:var(--teal);color:var(--teal)}
@@ -177,11 +193,6 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .pcard h3{font-size:20px}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
 .tags span{font-size:12px;background:var(--surface-2);padding:3px 9px;border-radius:999px;color:var(--muted);font-weight:500}
-.clocks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.cp{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:var(--surface-2);font-size:12px;line-height:1.3}
-.cp i{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}
-.cp.a i{background:var(--teal)} .cp.n i{background:var(--amber)} .cp.d i{background:var(--clay)}
-.cp b{display:block;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .actions{display:grid;grid-template-columns:1fr 2fr;gap:8px}
 .actions.one{grid-template-columns:1fr}
 .legend{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin:2px 0 12px;flex-wrap:wrap}
@@ -226,7 +237,47 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .toast.out{opacity:0}
 .foot{text-align:center;margin-top:18px}
 .saved-note{display:flex;gap:10px;align-items:center;background:var(--teal-soft);color:var(--teal);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;margin-bottom:14px}
-@media (max-width:360px){.clocks{grid-template-columns:1fr}.tab{font-size:12px}}
+/* Questions */
+.qsec-lock{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--clay);background:var(--clay-soft);padding:4px 10px;border-radius:999px;margin:-4px 0 6px}
+.q{padding:16px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0;padding-top:4px}
+.q-h{display:flex;gap:8px;align-items:baseline;margin-bottom:2px}
+.q-h b{font-size:11px;letter-spacing:.06em;color:var(--teal);font-variant-numeric:tabular-nums}
+.q-h strong{font-size:14.5px;line-height:1.35}
+.q-ctx{font-size:13px;color:var(--muted);margin-bottom:10px}
+.opts{display:grid;gap:6px}
+.opt{position:relative;cursor:pointer}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt span{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:14px;background:var(--surface);transition:.15s}
+.opt span small{display:block;color:var(--muted);font-size:12.5px;margin-top:1px}
+.opt input:checked + span{border-color:var(--teal);background:var(--teal-soft);box-shadow:inset 3px 0 0 var(--teal)}
+.opt input:focus-visible + span{outline:2px solid var(--teal);outline-offset:2px}
+.hz{display:grid;gap:12px}
+.hz-row > b{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.why{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.why summary{cursor:pointer;color:var(--teal);font-weight:600;list-style:none;display:inline-block}
+.why summary::-webkit-details-marker{display:none}
+.why summary::before{content:"+ "}
+.why[open] summary::before{content:"− "}
+.why p{margin-top:6px;line-height:1.5}
+textarea.text{resize:vertical;min-height:76px;font:inherit}
+/* Resonance insights */
+.counts{font-size:12px;color:var(--muted);margin:10px 0 8px}
+.ins{display:grid;gap:6px;margin-bottom:14px}
+.in{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.35;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.in i{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none}
+.in.synergy i{background:var(--teal)} .in.note i{background:var(--amber)} .in.friction i{background:var(--clay)}
+.in b{display:block;font-size:13px}
+.in small{display:block;color:var(--muted);font-size:12.5px;margin-top:1px}
+.bym{margin:10px 12px 0;border:1px solid var(--line);border-radius:12px;font-size:13px;flex:none}
+.bym summary{cursor:pointer;padding:10px 12px;font-weight:600;display:flex;justify-content:space-between;gap:8px;list-style:none}
+.bym summary::-webkit-details-marker{display:none}
+.bym summary span:last-child{color:var(--teal)}
+.bym-body{padding:0 12px 12px;max-height:38vh;overflow:auto}
+.bym-body .ins{margin-bottom:8px}
+.quote{border-left:3px solid var(--teal);padding:4px 10px;margin:10px 0 4px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.quote b{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:normal}
+@media (max-width:360px){.tab{font-size:12px}}
 </style>
 </head>
 <body>
@@ -296,21 +347,34 @@ input[type=range]{width:100%;accent-color:var(--teal)}
               <p class="hint">2–24 characters. No real names needed.</p>
             </div>
           </div>
+          <div class="agegrid">
+            <div>
+              <label class="label" for="age">Your age</label>
+              <input class="text" id="age" type="number" inputmode="numeric" min="18" max="99" placeholder="e.g. 34">
+            </div>
+            <fieldset style="margin:0">
+              <legend>Ages you'd like to meet</legend>
+              <div class="pills" id="ageRanges"></div>
+            </fieldset>
+          </div>
+          <p class="hint">You only see each other when both of your ages fall inside the other's chosen ranges.</p>
           <fieldset>
             <legend>Core values &amp; interests</legend>
+            <p class="q-ctx" style="margin-bottom:8px">This is the heart of matching: the more you genuinely share, the stronger your resonance. Pick 5 to 12.</p>
             <div class="tagbox" id="tagbox">
-              <input id="tagInput" maxlength="24" placeholder="Type and press Enter" autocomplete="off" aria-label="Add a value or interest">
+              <input id="tagInput" maxlength="24" placeholder="Add your own and press Enter" autocomplete="off" aria-label="Add your own value or interest">
             </div>
-            <div class="suggest" id="tagSuggest"></div>
-            <p class="hint">Up to 8 tags.</p>
+            <div class="picker">
+              <div class="picker-search">
+                <input id="interestSearch" type="search" placeholder="Search 118 interests…" autocomplete="off" aria-label="Search interests">
+                <span class="picker-count" id="interestCount">0 / 12</span>
+              </div>
+              <div class="picker-body" id="interestPicker"></div>
+            </div>
           </fieldset>
         </div>
 
-        <div class="card">
-          <h2 class="card-title"><span class="num">C</span>The Two Clocks</h2>
-          <p class="card-sub">How fast do you move, and where are you heading? Matches are scored on the drift between your clocks.</p>
-          <div id="clocks"></div>
-        </div>
+        <div id="questions"></div>
 
         <div id="formErrors" class="errors" hidden role="alert"></div>
         <button class="btn block" type="submit" id="saveBtn">Save &amp; continue to radar</button>
@@ -335,7 +399,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
         </label>
         <p class="fine">Your position is rounded (~0.7 mi) before it leaves this device. You're only visible while this tab is open and live — there is no "last seen".</p>
       </div>
-      <div class="legend"><span><i style="background:var(--teal)"></i>Aligned clock</span><span><i style="background:var(--amber)"></i>Slight drift</span><span><i style="background:var(--clay)"></i>Far apart</span></div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>Aligned</span><span><i style="background:var(--amber)"></i>Gentle note</span><span><i style="background:var(--clay)"></i>Worth a conversation</span></div>
       <div id="radarEmpty" class="empty">
         <div class="radar-anim idle" id="radarAnim"><span></span><span></span><span></span><b></b></div>
         <h3 id="emptyTitle">Not live yet</h3>
@@ -367,6 +431,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
           <div class="row"><strong>⏳ 72-hour intent window</strong><span class="timer" id="roomTimer"></span></div>
           This room closes automatically. Use it to agree on a real-world first meeting in a public place.
         </div>
+        <details class="bym" id="bym">
+          <summary><span>Before you meet</span><span id="bymScore"></span></summary>
+          <div class="bym-body" id="bymBody"></div>
+        </details>
         <div class="messages" id="messages" aria-live="polite"></div>
         <form class="composer" id="composer" autocomplete="off">
           <input class="text" id="msgInput" maxlength="1000" placeholder="Write a message…">
@@ -383,18 +451,105 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 'use strict';
 
 /* ---------- Constants ---------- */
-const CLOCKS = [
-  { key:'pace',     n:1, title:'Action pace',     q:'From match to first real-world date, you prefer…',            opts:['24–48 hours','3–5 days','1–2 weeks'],                 w:.25 },
-  { key:'horizon',  n:2, title:'Life horizon',    q:'Your target timeframe for marriage / lifelong commitment…',    opts:['1–2 years','2–4 years','5+ years'],                    w:.35 },
-  { key:'rhythm',   n:3, title:'Daily rhythm',    q:'Your day-to-day calendar is…',                                 opts:['Structured','Fluid'],                                  w:.15 },
-  { key:'conflict', n:4, title:'Conflict tempo',  q:'When tension arises, you prefer to…',                          opts:['Address it immediately','Process alone for 24 hours'], w:.25 },
+/* "Before you meet" question bank (from Two Clocks). Ranges store 1–5; choices store option values. */
+const opt = (v, t, p) => ({ v, t, p: p || t });
+const SECTIONS = [
+  { id: 'rhythm', title: 'Your rhythm', sub: 'How you move, meet and reply. These answers drive your resonance score on the radar.' },
+  { id: 'long',   title: 'The long picture', sub: 'Where you hope a marriage would take you, once there is a foundation.' },
+  { id: 'meet',   title: 'Before you meet', sub: 'Agree the shape of a first meeting, and of an honest ending, while nothing is at stake.' },
+  { id: 'close',  title: 'Closeness', sub: 'Affection, intimacy and anything already settled. Never shown on the radar: shared privately, device to device, only after you both say yes.', lock: true },
 ];
-const TAG_SUGGESTIONS = ['Faith','Family','Prayer','Service','Honesty','Hospitality','Outdoors','Music','Reading','Travel'];
+const QUESTIONS = [
+  { k: 'pace', sec: 'rhythm', type: 'range', short: 'Pace',
+    label: 'How quickly do you like things to move?', ctx: 'From messages, to meeting, to something more.',
+    steps: [['Very slowly', 'Months of getting to know each other before anything is defined.'], ['Unhurried', 'Weeks between stages; I like things to settle.'], ['Naturally', 'As it feels right, not on a schedule.'], ['Fairly quickly', 'If it feels good, I am happy to move forward.'], ['Quickly', 'When I know, I know, and I like to go with it.']],
+    why: 'When pace differs and nobody says so, one person feels rushed and the other feels held at arm’s length. Each reads the other’s speed as a message about how much they care. Usually it is simply temperament.' },
+  { k: 'freq', sec: 'rhythm', type: 'choice', short: 'How often in person',
+    label: 'Once things settle, how often would you ideally see each other in person?', ctx: 'Picture an ordinary month, a year from now.',
+    options: [opt('month', 'About once a month', 'about once a month'), opt('fortnight', 'Once a fortnight', 'once a fortnight'), opt('week', 'Once a week', 'once a week'), opt('few', 'A few times a week', 'a few times a week'), opt('most', 'Most days', 'most days')],
+    why: 'This is one of the most practical questions in a relationship, and one of the least asked. Once a fortnight and most days are both loving lives. They are not the same life.' },
+  { k: 'space', sec: 'rhythm', type: 'range', short: 'Space',
+    label: 'How much of your life would you want to share?', ctx: 'Within a settled relationship, not at the start.',
+    steps: [['Two lives, deeply connected', 'A strong bond, but most of my life stays my own.'], ['Mostly my own', 'Some shared routines, plenty of independence.'], ['Balanced', 'A real shared life alongside a real life of my own.'], ['Mostly shared', 'Most of daily life together, some time of my own.'], ['Closely woven', 'I want our lives intertwined.']],
+    why: 'Some people want a relationship to become the centre of daily life. Others want a deep bond between two largely independent lives. Neither is a lesser kind of love.' },
+  { k: 'rhythm', sec: 'rhythm', type: 'range', short: 'Reply rhythm',
+    label: 'How quickly do you usually reply to messages?', ctx: 'What you actually do, not what you think you should do.',
+    steps: [['Slowly, by design', 'Often unplugged for 6–12 hours; silence means focus, not distance.'], ['Within the day', 'I reply in a batch or two.'], ['Within a few hours', 'I check in at natural breaks.'], ['Fairly promptly', 'Usually within the hour when I’m free.'], ['Within minutes', 'My phone is usually close by.']],
+    why: 'Reply speed is the most common source of early misreading. A slow reply is nearly always just a full day, but it rarely feels that way to the person waiting.' },
+  { k: 'living', sec: 'long', type: 'choice', short: 'Home',
+    label: 'In the long run, how would you like to live?', ctx: 'There is no right answer here, only an honest one.',
+    options: [opt('apart', 'Always in our own homes', 'always our own homes'), opt('later', 'Our own homes for a good while, perhaps one day together', 'own homes for a good while, perhaps together one day'), opt('time', 'Sharing a home in time', 'sharing a home in time'), opt('soon', 'Sharing a home fairly soon', 'sharing a home fairly soon'), opt('unsure', 'I genuinely don’t know yet', 'not decided yet')],
+    why: 'Not every lasting relationship shares a roof. What matters is that both people want the same arrangement, or know early on that they don’t.' },
+  { k: 'horizon', sec: 'long', type: 'horizon', short: 'The long picture',
+    label: 'Once there is a foundation, what do you picture?', ctx: 'Choose one for each point in time. A rough picture is enough.',
+    points: ['5 years', '10 years', '15 years'],
+    options: [opt('exploring', 'Still finding our shape', 'Finding our shape'), opt('committed', 'Committed, in our own homes', 'Committed, own homes'), opt('shared', 'Sharing a home and daily life', 'Sharing a home'), opt('building', 'Building something together: a family, a home, a project', 'Building together')],
+    why: 'A rough picture of five, ten and fifteen years shows whether two people are heading toward the same kind of life. Magnetism tells you there is energy between you; a shared picture of the future gives it a direction.' },
+  { k: 'firstMeet', sec: 'meet', type: 'choice', short: 'A first meeting',
+    label: 'What kind of first meeting would feel comfortable?', ctx: 'Easy to suggest, easy to say yes to.',
+    options: [opt('coffee', 'Coffee or tea, about an hour', 'coffee or tea for about an hour'), opt('walk', 'A walk somewhere open', 'a walk somewhere open'), opt('meal', 'A meal', 'a meal'), opt('activity', 'Doing something together: a gallery, a market, a class', 'doing something together'), opt('together', 'Let’s decide together', 'deciding together')],
+    why: 'A first meeting goes better when both people are at ease. Agreeing its shape in advance takes the pressure off. Somewhere public and familiar is also the sensible choice with someone you have only known online.' },
+  { k: 'ending', sec: 'meet', type: 'choice', short: 'If it isn’t right',
+    label: 'If, after meeting, it isn’t right, how would you like to hear it?', ctx: 'Agreeing this now, while nothing is at stake, makes it easy to be kind later.',
+    options: [opt('message', 'A kind, clear message', 'a kind, clear message'), opt('call', 'A short call', 'a short call'), opt('inperson', 'Said in person, at the end of the meeting', 'in person, at the end of the meeting'), opt('any', 'Whatever is easiest, as long as I am told', 'whatever is easiest, as long as they are told')],
+    why: 'Most people would rather be told clearly than left wondering. An ending agreed in advance is far easier to carry out kindly than one invented in the moment.' },
+  { k: 'touch', sec: 'close', priv: true, type: 'range', short: 'Physical affection',
+    label: 'How important is physical affection to you, day to day?', ctx: 'Holding hands, a hug, sitting close.',
+    steps: [['Not very', 'I show care in other ways: time, words, practical help.'], ['A little', 'Nice now and then, not something I need.'], ['Moderately', 'Part of how I feel close, alongside other things.'], ['Quite important', 'I feel closer when there is regular affection.'], ['Essential', 'Touch is one of the main ways I feel loved.']],
+    why: 'For some, touch is the main way closeness is felt. For others, care is shown through time, words or practical help. Couples understand each other better when each knows how the other most naturally gives and receives care.' },
+  { k: 'pda', sec: 'close', priv: true, type: 'choice', short: 'Affection in public',
+    label: 'How do you feel about affection in public?', ctx: 'Out together, in front of friends or strangers.',
+    options: [opt('private', 'I keep affection private', 'keeps affection private'), opt('small', 'Small things, like holding hands', 'small things, like holding hands'), opt('open', 'I am comfortable being openly affectionate', 'openly affectionate'), opt('depends', 'It depends on where we are', 'depends on where you are')],
+    why: 'Some people feel warmth in a held hand in the street; others feel exposed. Comfort here is often shaped by upbringing, culture and faith, so it is worth asking rather than guessing.' },
+  { k: 'physPace', sec: 'close', priv: true, type: 'choice', short: 'When closeness feels right',
+    label: 'When does physical closeness, like a kiss, feel right to you?', ctx: 'A general sense, not a promise. It will always depend on the person and the moment.',
+    options: [opt('first', 'It can feel natural on a first date', 'from the first date'), opt('few', 'After a few dates, once there is some trust', 'after a few dates'), opt('later', 'After weeks or months, once we are committed', 'once committed'), opt('commitment', 'Only within marriage or a long-term commitment', 'only within marriage'), opt('talk', 'I would rather we talk about it when we get there', 'to talk about when you get there')],
+    why: 'Being out of step on timing is uncomfortable for both people. One may feel rejected, the other pressured. Knowing early lets the slower pace lead, without either person feeling wrong.' },
+  { k: 'intimacy', sec: 'close', priv: true, type: 'choice', short: 'Sexual intimacy',
+    label: 'How important is sexual intimacy to you in a marriage?', ctx: 'Over the long run, once there is trust. There is no right answer, and you can choose to talk about it in person instead.',
+    options: [opt('none', 'It is not part of what I am looking for', 'not part of what they are looking for'), opt('small', 'A small part of a relationship for me', 'a small part'), opt('one', 'One part among many', 'one part among many'), opt('important', 'Important to me', 'important'), opt('central', 'Central to how I feel close', 'central'), opt('inperson', 'I would rather talk about this in person', 'to talk about in person')],
+    why: 'Some people discover, months in, that their need for intimacy is very different from their partner’s. It is one of the quieter reasons good relationships end. Naming it early, without judgement, can save real heartache on both sides.' },
+  { k: 'initiate', sec: 'close', priv: true, type: 'choice', short: 'Who reaches out first',
+    label: 'Who usually reaches out first?', ctx: 'Plans, messages, affection: who tends to start things.',
+    options: [opt('me', 'I tend to initiate', 'tends to initiate'), opt('them', 'I like the other person to initiate', 'likes to be asked'), opt('both', 'It should go both ways', 'both ways'), opt('depends', 'It depends on the moment', 'depends on the moment')],
+    why: 'If both people wait for the other to reach out, it can look like disinterest on both sides. If one person always starts things, they may begin to feel they are carrying the connection alone.' },
+  { k: 'settled', sec: 'close', priv: true, type: 'text', max: 200, short: 'Settled decisions',
+    label: 'Is there a life decision that is already settled for you?', ctx: 'Children, where you live, how you practise your faith, someone who depends on you. In your own words, or leave it blank.',
+    ph: 'e.g. I have two children who live with me half the week, and I won’t move away from them.',
+    why: 'Some decisions are made before we meet anyone. They are not up for negotiation, and finding out late helps no one. Said early, they are simply facts to build around.' },
+  { k: 'know', sec: 'close', priv: true, type: 'text', max: 200, short: 'One thing to know',
+    label: 'One thing you would like them to know before you meet.', ctx: 'Often the most useful thing is the one no question thought to ask.',
+    ph: 'e.g. I am quieter in person at first. It isn’t a lack of interest.' },
+];
+const QK = Object.fromEntries(QUESTIONS.map(q => [q.k, q]));
+const PUB_Q = QUESTIONS.filter(q => !q.priv), PRIV_Q = QUESTIONS.filter(q => q.priv);
+/* Resonance weights (public answers only; sum = 1) */
+const RES_W = { horizon: .25, pace: .18, freq: .15, space: .14, living: .14, rhythm: .08, firstMeet: .03, ending: .03 };
+/* Interest catalogue: 118 options (no star signs / astrology by design) */
+const INTERESTS = {
+  'Faith & spirit': ['Faith', 'Prayer', 'Meditation', 'Scripture study', 'Worship music', 'Church community', 'Mosque community', 'Temple community', 'Fasting', 'Pilgrimage', 'Retreats', 'Contemplative practice', 'Gratitude practice', 'Mindfulness', 'Spiritual reading'],
+  'Values': ['Family', 'Honesty', 'Loyalty', 'Kindness', 'Humility', 'Generosity', 'Integrity', 'Forgiveness', 'Patience', 'Hospitality', 'Service', 'Respect for elders', 'Simplicity'],
+  'Home & family': ['Raising children', 'Wanting children', 'Homemaking', 'Family traditions', 'Hosting friends', 'Gardening', 'Home improvement', 'Interior design', 'Dogs', 'Cats', 'Caring for parents'],
+  'Outdoors': ['Outdoors', 'Hiking', 'Long walks', 'Camping', 'Cycling', 'Running', 'Swimming', 'Wild swimming', 'Beach days', 'Mountains', 'Birdwatching', 'Countryside'],
+  'Arts & culture': ['Reading', 'Poetry', 'Creative writing', 'Journalling', 'Painting', 'Drawing', 'Photography', 'Museums', 'Art galleries', 'Theatre', 'Cinema', 'Crafts'],
+  'Music & dance': ['Music', 'Singing', 'Choir', 'Gospel', 'Jazz', 'Classical music', 'Afrobeats', 'Live music', 'Playing an instrument', 'Dancing'],
+  'Food & drink': ['Cooking', 'Baking', 'Healthy eating', 'Vegetarian', 'Vegan', 'Halal food', 'Kosher food', 'Coffee', 'Tea', 'New restaurants', 'Alcohol-free'],
+  'Mind & learning': ['Learning languages', 'History', 'Philosophy', 'Science', 'Technology', 'Podcasts', 'Board games', 'Chess', 'Documentaries', 'Psychology', 'Lifelong learning'],
+  'Sport & movement': ['Fitness', 'Gym', 'Yoga', 'Football', 'Tennis', 'Martial arts', 'Climbing'],
+  'Service & community': ['Volunteering', 'Charity work', 'Mentoring', 'Community building', 'Social justice', 'Environment', 'Animal welfare', 'Teaching', 'Youth work'],
+  'Lifestyle': ['Travel', 'Road trips', 'Slow living', 'Quiet nights in', 'Entrepreneurship', 'Personal finance', 'Minimalism'],
+};
+const AGE_RANGES = ['18-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-59', '60+'];
+const MIN_TAGS = 5;
+const tagKey = t => String(t).trim().toLowerCase();
+const inRange = (age, r) => r === '60+' ? age >= 60 : (([lo, hi]) => age >= lo && age <= hi)(r.split('-').map(Number));
+const ageOk = (age, ranges) => Number.isInteger(age) && Array.isArray(ranges) && ranges.some(r => inRange(age, r));
+function defaultRanges(age) { const i = AGE_RANGES.findIndex(r => inRange(age, r)); return AGE_RANGES.slice(Math.max(0, i - 1), i + 2); }
 const K = { session:'tc_session', profile:'tc_profile', radius:'tc_radius', likes:'tc_likes', hidden:'tc_hidden', chats:'tc_chats' };
 const ROOM_MS = 72 * 3600 * 1000;
 const PREFIX = 'tc-';
-const HUB_PREFIX = 'twoclocks-v1-hub-';
-const MAX_TAGS = 8;
+const HUB_PREFIX = 'twoclocks-v3-hub-';
+const MAX_TAGS = 12;
 
 /* ---------- Helpers ---------- */
 const $ = s => document.querySelector(s);
@@ -436,14 +591,114 @@ function haversine(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
-/* Two Clocks compatibility: weighted temporal drift, 0 = identical, 1 = opposite ends */
-function clockScore(a, b) {
-  let drift = 0; const per = [];
-  for (const c of CLOCKS) {
-    const d = Math.abs(a[c.key] - b[c.key]) / (c.opts.length - 1);
-    per.push(d); drift += c.w * d;
+/* ---------- Resonance: how closely two sets of answers align (0–100) ---------- */
+const qIdx = (k, v) => QK[k].options.findIndex(o => o.v === v);
+const qOpt = (k, v) => QK[k].options.find(o => o.v === v) || { t: '—', p: '—' };
+const qStep = (k, v) => QK[k].steps[v - 1][0];
+function alignOf(k, a, b) {
+  switch (k) {
+    case 'pace': case 'space': case 'rhythm': return 1 - Math.abs(a - b) / 4;
+    case 'freq': return 1 - Math.abs(qIdx(k, a) - qIdx(k, b)) / 4;
+    case 'living': return (a === 'unsure' || b === 'unsure') ? .6 : 1 - Math.abs(qIdx(k, a) - qIdx(k, b)) / 3;
+    case 'horizon': return a.reduce((s, x, i) => s + 1 - Math.abs(qIdx(k, x) - qIdx(k, b[i])) / 3, 0) / 3;
+    case 'firstMeet': return a === b ? 1 : (a === 'together' || b === 'together') ? .85 : .6;
+    case 'ending': return a === b ? 1 : .75;
   }
-  return { score: Math.round(100 * (1 - drift)), per };
+  return 0;
+}
+/* Interests carry 60% of resonance; the "Before you meet" answers carry 40%. */
+const INTEREST_W = .6;
+function sharedTags(A, B) {
+  const bk = new Set((B.tags || []).map(tagKey));
+  return (A.tags || []).filter(t => bk.has(tagKey(t)));
+}
+function resonance(A, B) {
+  let ans = 0;
+  for (const [k, w] of Object.entries(RES_W)) ans += w * alignOf(k, A.pub[k], B.pub[k]);
+  const shared = sharedTags(A, B);
+  const smaller = Math.max(MIN_TAGS, Math.min((A.tags || []).length, (B.tags || []).length));
+  const int = Math.min(1, shared.length / smaller);
+  return { score: Math.round(100 * (INTEREST_W * int + (1 - INTEREST_W) * ans)), shared, interest: Math.round(100 * int), answers: Math.round(100 * ans) };
+}
+/* Insights: where answers meet — synergy (aligned), note (gentle), friction (worth a conversation) */
+function insights(a, b, nA, nB, pa, pb, full) {
+  const out = [], add = (type, title, body) => out.push({ type, title, body });
+  const both = (x, y) => `${nA}: ${x}. ${nB}: ${y}.`;
+  // long picture
+  const diffs = [0, 1, 2].filter(i => a.horizon[i] !== b.horizon[i]);
+  if (!diffs.length) add('synergy', 'The same long picture', 'At five, ten and fifteen years you picture the same shape of life.');
+  else {
+    const i = diffs[diffs.length - 1];
+    const body = `In ${QK.horizon.points[i]}, ${nA}: “${qOpt('horizon', a.horizon[i]).p.toLowerCase()}”. ${nB}: “${qOpt('horizon', b.horizon[i]).p.toLowerCase()}”.`;
+    if (diffs.length >= 2) add('friction', 'Different long pictures', `Your pictures differ at ${diffs.length} of the three points. ${body}`);
+    else add('note', 'Mostly the same long picture', body);
+  }
+  // home
+  if (a.living === 'unsure' || b.living === 'unsure') add('note', 'Home is an open question', both(qOpt('living', a.living).p, qOpt('living', b.living).p) + ' Worth leaving open rather than assuming.');
+  else {
+    const g = Math.abs(qIdx('living', a.living) - qIdx('living', b.living));
+    if (!g) add('synergy', 'The same idea of home', `You both picture ${qOpt('living', a.living).p}.`);
+    else add(g >= 2 ? 'friction' : 'note', g >= 2 ? 'Different ideas of home' : 'Similar ideas of home', both(qOpt('living', a.living).p, qOpt('living', b.living).p));
+  }
+  // pace
+  const pg = Math.abs(a.pace - b.pace);
+  if (!pg) add('synergy', 'The same pace', `You both like things to move: ${qStep('pace', a.pace).toLowerCase()}.`);
+  else if (pg >= 2) add('friction', 'Different speeds', both(qStep('pace', a.pace), qStep('pace', b.pace)) + ' One may feel rushed, the other held at arm’s length.');
+  else add('note', 'Close on pace', both(qStep('pace', a.pace), qStep('pace', b.pace)));
+  // how often
+  const fg = Math.abs(qIdx('freq', a.freq) - qIdx('freq', b.freq));
+  if (!fg) add('synergy', 'The same rhythm of togetherness', `You both picture seeing each other ${qOpt('freq', a.freq).p}.`);
+  else if (fg >= 2) add('friction', 'Different pictures of togetherness', both(qOpt('freq', a.freq).p, qOpt('freq', b.freq).p) + ' Neither is more loving. They are different lives.');
+  else add('note', 'Close on how often', both(qOpt('freq', a.freq).p, qOpt('freq', b.freq).p));
+  // space
+  const sg = Math.abs(a.space - b.space);
+  if (!sg) add('synergy', 'The same balance of togetherness', `You both chose “${qStep('space', a.space)}”.`);
+  else if (sg >= 2) add(sg >= 3 ? 'friction' : 'note', 'How much to share', both(qStep('space', a.space), qStep('space', b.space)));
+  // replies
+  const rg = Math.abs(a.rhythm - b.rhythm);
+  if (!rg) add('synergy', 'The same reply clock', `You both reply ${qStep('rhythm', a.rhythm).toLowerCase()}.`);
+  else if (rg >= 3) add('friction', 'Different reply clocks', both(qStep('rhythm', a.rhythm), qStep('rhythm', b.rhythm)) + ' No subtext in silence: a slow reply means busy, not disinterested.');
+  // first meeting
+  if (a.firstMeet === b.firstMeet) add('synergy', 'An easy first meeting', `You would both be comfortable with ${qOpt('firstMeet', a.firstMeet).p}.`);
+  else add('note', 'Shape of a first meeting', both(qOpt('firstMeet', a.firstMeet).p, qOpt('firstMeet', b.firstMeet).p) + ' Easy to agree.');
+  if (full) add('synergy', 'An honest ending, agreed', both(qOpt('ending', a.ending).p, qOpt('ending', b.ending).p) + ' Agreed now, it is easy to be kind later.');
+  // closeness (only after a match, when both private sets are present)
+  if (pa && pb) {
+    if (pa.intimacy === 'inperson' || pb.intimacy === 'inperson') add('note', 'Intimacy, to talk about in person', 'Raise it gently once there is some trust, and before things become serious.');
+    else {
+      const ig = Math.abs(qIdx('intimacy', pa.intimacy) - qIdx('intimacy', pb.intimacy));
+      if (!ig) add('synergy', 'The same place for intimacy', `You both said: ${qOpt('intimacy', pa.intimacy).p}.`);
+      else add(ig >= 2 ? 'friction' : 'note', ig >= 2 ? 'A different place for intimacy' : 'Close on intimacy', both(qOpt('intimacy', pa.intimacy).p, qOpt('intimacy', pb.intimacy).p) + (ig >= 2 ? ' Talk about it honestly and early, without pressure. Neither need is wrong.' : ''));
+    }
+    if (pa.physPace === 'talk' || pb.physPace === 'talk') add('note', 'Timing, to talk about together', 'A gentle, open conversation about physical closeness will serve you both.');
+    else {
+      const g = Math.abs(qIdx('physPace', pa.physPace) - qIdx('physPace', pb.physPace));
+      if (!g) add('synergy', 'The same sense of timing', `Physical closeness feels right to you both ${qOpt('physPace', pa.physPace).p}.`);
+      else add(g >= 2 ? 'friction' : 'note', g >= 2 ? 'Different timing for closeness' : 'Similar timing', both(qOpt('physPace', pa.physPace).p, qOpt('physPace', pb.physPace).p) + ' Let the slower pace lead.');
+    }
+    if (Math.abs(pa.touch - pb.touch) >= 2) add('note', 'Different need for touch', both(qStep('touch', pa.touch), qStep('touch', pb.touch)) + ' Ask how each of you most likes to be shown care.');
+    if ((pa.pda === 'private' && pb.pda === 'open') || (pa.pda === 'open' && pb.pda === 'private')) add('note', 'Affection in public', both(qOpt('pda', pa.pda).p, qOpt('pda', pb.pda).p) + ' Agree what feels comfortable when you are out together.');
+    if (pa.initiate === 'them' && pb.initiate === 'them') add('note', 'You both wait to be asked', 'Left unsaid, this can look like disinterest on both sides. Take turns starting things, and say that you will.');
+    else if ((pa.initiate === 'me' && pb.initiate === 'them') || (pa.initiate === 'them' && pb.initiate === 'me')) add('synergy', 'A natural fit on who starts things', 'One tends to initiate, the other likes to be asked — as long as it doesn’t become one-sided.');
+  }
+  const rank = { friction: 0, note: 1, synergy: 2 };
+  return out.sort((x, y) => rank[x.type] - rank[y.type]);
+}
+function insList(list, full) {
+  return el('div', { class: 'ins' }, list.map(i => el('div', { class: 'in ' + i.type }, el('i'),
+    el('div', {}, el('b', {}, i.title), full || i.type !== 'synergy' ? el('small', {}, i.body) : null))));
+}
+function cleanAnswers(a, qs) {
+  if (!a || typeof a !== 'object') return null;
+  const out = {};
+  for (const q of qs) {
+    const v = a[q.k];
+    if (q.type === 'range') { if (!Number.isInteger(v) || v < 1 || v > 5) return null; out[q.k] = v; }
+    else if (q.type === 'choice') { if (!q.options.some(o => o.v === v)) return null; out[q.k] = v; }
+    else if (q.type === 'horizon') { if (!Array.isArray(v) || v.length !== 3 || !v.every(x => q.options.some(o => o.v === x))) return null; out[q.k] = v.slice(); }
+    else out[q.k] = typeof v === 'string' ? v.trim().slice(0, q.max) : '';
+  }
+  return out;
 }
 
 /* ---------- Session & state ---------- */
@@ -477,27 +732,27 @@ const S = {
 let currentTab = 'profile';
 
 /* ---------- Profile validation (own + incoming) ---------- */
-function cleanProfile(p, requireCoords = true) {
+function cleanProfile(p, requireCoords = true, own = false) {
   if (!p || typeof p !== 'object') return null;
   const handle = typeof p.handle === 'string' ? p.handle.trim().slice(0, 24) : '';
   if (handle.length < 2) return null;
   if (typeof p.photo !== 'string' || p.photo.length > 350000 || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(p.photo)) return null;
   if (p.faith !== 'spiritual' || p.intent !== 'marriage') return null;
   const tags = Array.isArray(p.tags) ? p.tags.filter(t => typeof t === 'string').map(t => t.trim().slice(0, 24)).filter(Boolean).slice(0, MAX_TAGS) : [];
-  const clocks = {};
-  for (const c of CLOCKS) {
-    const v = p.clocks && p.clocks[c.key];
-    if (!Number.isInteger(v) || v < 0 || v >= c.opts.length) return null;
-    clocks[c.key] = v;
-  }
-  const out = { handle, photo: p.photo, tags, clocks, faith: 'spiritual', intent: 'marriage' };
+  const pub = cleanAnswers(p.pub, PUB_Q);
+  if (!pub || tags.length < MIN_TAGS) return null;
+  if (!Number.isInteger(p.age) || p.age < 18 || p.age > 99) return null;
+  const ages = Array.isArray(p.ages) ? AGE_RANGES.filter(r => p.ages.includes(r)) : [];
+  if (!ages.length) return null;
+  const out = { v: 3, handle, photo: p.photo, age: p.age, ages, tags, pub, faith: 'spiritual', intent: 'marriage' };
+  if (own) { const priv = cleanAnswers(p.priv, PRIV_Q); if (!priv) return null; out.priv = priv; }
   if (requireCoords) {
     if (!validCoord(p.lat, p.lon)) return null;
     out.lat = p.lat; out.lon = p.lon;
   }
   return out;
 }
-S.profile = cleanProfile(LS.get(K.profile, null), false);
+S.profile = cleanProfile(LS.get(K.profile, null), false, true);
 
 /* ---------- UI: tabs ---------- */
 function enableTabs() {
@@ -526,16 +781,58 @@ function toast(msg, kind) {
 }
 
 /* ---------- STEP 1: Onboarding ---------- */
-function buildClocks() {
-  const box = $('#clocks');
-  for (const c of CLOCKS) {
-    box.append(el('fieldset', { class: 'clock' },
-      el('legend', { class: 'clock-h' }, el('b', {}, `Clock ${c.n}`), el('strong', {}, c.title)),
-      el('p', {}, c.q),
-      el('div', { class: 'pills' }, c.opts.map((o, i) =>
-        el('label', {}, el('input', { type: 'radio', name: 'clock-' + c.key, value: String(i) }), el('span', {}, o))
-      ))
-    ));
+function buildQuestions() {
+  const box = $('#questions');
+  let n = 0;
+  SECTIONS.forEach((sec, si) => {
+    const qs = QUESTIONS.filter(q => q.sec === sec.id);
+    box.append(el('div', { class: 'card' },
+      el('h2', { class: 'card-title' }, el('span', { class: 'num' }, 'CDEF'[si]), sec.title),
+      el('p', { class: 'card-sub' }, sec.sub),
+      sec.lock ? el('div', { class: 'qsec-lock' }, '🔒 Only shared with a mutual match') : null,
+      qs.map(q => questionEl(q, ++n))));
+  });
+}
+function questionEl(q, n) {
+  const name = 'q-' + q.k;
+  let body;
+  if (q.type === 'range') body = el('div', { class: 'opts' }, q.steps.map((s, i) =>
+    el('label', { class: 'opt' }, el('input', { type: 'radio', name, value: String(i + 1) }), el('span', {}, s[0], el('small', {}, s[1])))));
+  else if (q.type === 'choice') body = el('div', { class: 'opts' }, q.options.map(o =>
+    el('label', { class: 'opt' }, el('input', { type: 'radio', name, value: o.v }), el('span', {}, o.t))));
+  else if (q.type === 'horizon') body = el('div', { class: 'hz' }, q.points.map((pt, i) =>
+    el('div', { class: 'hz-row' }, el('b', {}, 'In ' + pt), el('div', { class: 'pills' }, q.options.map(o =>
+      el('label', {}, el('input', { type: 'radio', name: `${name}-${i}`, value: o.v }), el('span', {}, o.p)))))));
+  else body = el('textarea', { class: 'text', id: name, maxlength: String(q.max), rows: '3', placeholder: q.ph || '', 'aria-label': q.label });
+  return el('fieldset', { class: 'q' },
+    el('legend', { class: 'q-h' }, el('b', {}, String(n).padStart(2, '0')), el('strong', {}, q.label + (q.type === 'text' ? ' (optional)' : ''))),
+    q.ctx ? el('p', { class: 'q-ctx' }, q.ctx) : null,
+    body,
+    q.why ? el('details', { class: 'why' }, el('summary', {}, 'Why this matters'), el('p', {}, q.why)) : null);
+}
+function readAnswers(qs, errs) {
+  const out = {};
+  for (const q of qs) {
+    const name = 'q-' + q.k;
+    if (q.type === 'text') { out[q.k] = $('#' + name).value.trim().slice(0, q.max); continue; }
+    if (q.type === 'horizon') {
+      const v = q.points.map((_, i) => { const r = $(`input[name="${name}-${i}"]:checked`); return r ? r.value : null; });
+      if (v.includes(null)) errs.push(`Answer every point in time for “${q.short}”.`);
+      out[q.k] = v; continue;
+    }
+    const r = $(`input[name="${name}"]:checked`);
+    if (!r) { errs.push(`Answer “${q.short}”.`); continue; }
+    out[q.k] = q.type === 'range' ? +r.value : r.value;
+  }
+  return out;
+}
+function setAnswers(a) {
+  for (const q of QUESTIONS) {
+    const v = a[q.k], name = 'q-' + q.k;
+    if (v == null) continue;
+    if (q.type === 'text') $('#' + name).value = v;
+    else if (q.type === 'horizon') v.forEach((x, i) => { const r = $(`input[name="${name}-${i}"][value="${x}"]`); if (r) r.checked = true; });
+    else { const r = $(`input[name="${name}"][value="${v}"]`); if (r) r.checked = true; }
   }
 }
 function renderTags() {
@@ -544,17 +841,45 @@ function renderTags() {
   S.draftTags.forEach((t, i) => box.insertBefore(
     el('span', { class: 'chip' }, t, el('button', { type: 'button', 'aria-label': `Remove ${t}`, onclick: () => { S.draftTags.splice(i, 1); renderTags(); } }, '×')),
     input));
-  input.disabled = S.draftTags.length >= MAX_TAGS;
-  input.placeholder = S.draftTags.length >= MAX_TAGS ? 'Tag limit reached' : 'Type and press Enter';
-  const sug = $('#tagSuggest'); sug.replaceChildren();
-  TAG_SUGGESTIONS.filter(s => !S.draftTags.some(t => t.toLowerCase() === s.toLowerCase())).slice(0, 6)
-    .forEach(s => sug.append(el('button', { type: 'button', onclick: () => addTag(s) }, '+ ' + s)));
+  const full = S.draftTags.length >= MAX_TAGS;
+  input.disabled = full;
+  input.placeholder = full ? `Limit reached (${MAX_TAGS})` : 'Add your own and press Enter';
+  const cnt = $('#interestCount');
+  cnt.textContent = `${S.draftTags.length} / ${MAX_TAGS}`;
+  cnt.classList.toggle('ok', S.draftTags.length >= MIN_TAGS);
+  renderPicker();
 }
-function addTag(raw) {
+function renderPicker() {
+  const q = tagKey($('#interestSearch').value || '');
+  const chosen = new Set(S.draftTags.map(tagKey)), full = S.draftTags.length >= MAX_TAGS;
+  const body = $('#interestPicker'); body.replaceChildren();
+  for (const [cat, list] of Object.entries(INTERESTS)) {
+    const items = list.filter(t => !q || tagKey(t).includes(q) || tagKey(cat).includes(q));
+    if (!items.length) continue;
+    body.append(el('div', { class: 'picker-cat' }, el('b', {}, cat), el('div', { class: 'ichips' }, items.map(t => {
+      const on = chosen.has(tagKey(t));
+      return el('button', { type: 'button', class: 'ichip', 'aria-pressed': on ? 'true' : 'false', disabled: !on && full,
+        onclick: () => { if (on) S.draftTags = S.draftTags.filter(x => tagKey(x) !== tagKey(t)); else addTag(t, true); renderTags(); } }, t);
+    }))));
+  }
+  if (!body.children.length) body.append(el('p', { class: 'muted', style: 'padding:10px 0' }, 'No match — press Enter in the box above to add it as your own.'));
+}
+$('#interestSearch').addEventListener('input', renderPicker);
+function buildAgeRanges() {
+  $('#ageRanges').append(...AGE_RANGES.map(r => el('label', {}, el('input', { type: 'checkbox', name: 'ages', value: r }), el('span', {}, r))));
+  $('#age').addEventListener('change', () => {
+    const a = parseInt($('#age').value, 10);
+    if (a >= 18 && a <= 99 && !$$('input[name="ages"]:checked').length) defaultRanges(a).forEach(r => { $(`input[name="ages"][value="${r}"]`).checked = true; });
+  });
+}
+function addTag(raw, quiet) {
   const t = raw.replace(/,/g, ' ').trim().slice(0, 24);
   if (!t || S.draftTags.length >= MAX_TAGS) return;
-  if (S.draftTags.some(x => x.toLowerCase() === t.toLowerCase())) return;
-  S.draftTags.push(t); renderTags();
+  if (S.draftTags.some(x => tagKey(x) === tagKey(t))) return;
+  // Snap custom entries to the catalogue spelling so they match other people
+  const canon = Object.values(INTERESTS).flat().find(x => tagKey(x) === tagKey(t));
+  S.draftTags.push(canon || t);
+  if (!quiet) renderTags();
 }
 $('#tagInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(e.target.value); e.target.value = ''; }
@@ -627,7 +952,9 @@ function fillForm(p) {
   $('#handle').value = p.handle;
   S.draftPhoto = p.photo; setPhotoPreview(p.photo);
   S.draftTags = p.tags.slice(); renderTags();
-  for (const c of CLOCKS) { const r = $(`input[name="clock-${c.key}"][value="${p.clocks[c.key]}"]`); if (r) r.checked = true; }
+  setAnswers({ ...p.pub, ...p.priv });
+  $('#age').value = p.age;
+  $$('input[name="ages"]').forEach(c => { c.checked = p.ages.includes(c.value); });
 }
 
 $('#onboard').addEventListener('submit', e => {
@@ -642,12 +969,12 @@ $('#onboard').addEventListener('submit', e => {
   const handle = $('#handle').value.trim();
   if (handle.length < 2) errs.push('Enter a display handle (at least 2 characters).');
   const pending = $('#tagInput').value.trim(); if (pending) { addTag(pending); $('#tagInput').value = ''; }
-  if (!S.draftTags.length) errs.push('Add at least one core value or interest.');
-  const clocks = {};
-  for (const c of CLOCKS) {
-    const r = $(`input[name="clock-${c.key}"]:checked`);
-    if (!r) errs.push(`Answer Clock ${c.n}: ${c.title}.`); else clocks[c.key] = +r.value;
-  }
+  const age = parseInt($('#age').value, 10);
+  if (!(age >= 18 && age <= 99)) errs.push('Enter your age (18 or over).');
+  const ages = $$('input[name="ages"]:checked').map(c => c.value);
+  if (!ages.length) errs.push('Choose at least one age range you would like to meet.');
+  if (S.draftTags.length < MIN_TAGS) errs.push(`Choose at least ${MIN_TAGS} core values or interests (you have ${S.draftTags.length}). They are the heart of matching.`);
+  const pub = readAnswers(PUB_Q, errs), priv = readAnswers(PRIV_Q, errs);
   const box = $('#formErrors');
   if (errs.length) {
     box.replaceChildren(el('strong', {}, 'A few things are missing:'), el('ul', {}, errs.map(x => el('li', {}, x))));
@@ -655,15 +982,15 @@ $('#onboard').addEventListener('submit', e => {
     return;
   }
   box.hidden = true;
-  const p = cleanProfile({ handle, photo: S.draftPhoto, tags: S.draftTags, clocks, faith: 'spiritual', intent: 'marriage' }, false);
+  const p = cleanProfile({ handle, photo: S.draftPhoto, tags: S.draftTags, age, ages, pub, priv, faith: 'spiritual', intent: 'marriage' }, false, true);
   if (!p) { toast('Something went wrong validating your profile. Try a different photo.'); return; }
   const first = !S.profile;
   S.profile = p;
   if (!LS.set(K.profile, p)) return;
   enableTabs();
   // Rescore and re-broadcast to anyone already connected
-  for (const [id, x] of S.profiles) { const r = clockScore(p.clocks, x.p.clocks); x.score = r.score; x.per = r.per; }
-  if (S.live) for (const e of S.direct.values()) if (e.open) sendProfile(e.conn);
+  for (const x of S.profiles.values()) Object.assign(x, resonance(p, x.p));
+  if (S.live) for (const [id, e] of S.direct) if (e.open) { sendProfile(e.conn); sendPrivate(id); }
   toast(first ? 'Profile saved on this device. Welcome.' : 'Profile updated.');
   showTab('radar');
 });
@@ -885,6 +1212,7 @@ function setupDirect(c) {
     entry.open = true;
     sendProfile(c);
     if (S.likes.has(id)) safeSend(c, { type: 'interest', on: true });
+    sendPrivate(id);
     renderMatches(); renderRoomHeader();
   });
   c.on('data', d => { if (S.direct.get(id) === entry) onDirectData(id, d); });
@@ -901,6 +1229,11 @@ function closeDirect(id) {
   if (e) { try { e.conn.close(); } catch {} }
 }
 function safeSend(c, msg) { if (!c || !c.open) return false; try { c.send(msg); return true; } catch { return false; } }
+/* Closeness answers travel only to a mutual match, over the direct channel */
+function sendPrivate(id) {
+  const e = S.direct.get(id);
+  if (S.chats[id] && S.profile && S.profile.priv && e && e.open) safeSend(e.conn, { type: 'private', priv: S.profile.priv });
+}
 function sendProfile(c) {
   if (!S.profile || !S.loc) return;
   safeSend(c, { type: 'profile', profile: { ...S.profile, lat: S.loc.lat, lon: S.loc.lon } });
@@ -912,14 +1245,20 @@ function onDirectData(id, d) {
     const p = cleanProfile(d.profile, true);
     if (!p) { closeDirect(id); renderRadar(); return; }
     const dist = haversine(S.loc.lat, S.loc.lon, p.lat, p.lon);
-    const r = clockScore(S.profile.clocks, p.clocks);
-    S.profiles.set(id, { p, dist, score: r.score, per: r.per });
-    if (S.chats[id]) { S.chats[id].handle = p.handle; S.chats[id].photo = p.photo; saveChats(); }
+    S.profiles.set(id, { p, dist, ...resonance(S.profile, p) });
+    if (S.chats[id]) { Object.assign(S.chats[id], { handle: p.handle, photo: p.photo, pub: p.pub, tags: p.tags, age: p.age }); saveChats(); if (S.active === id) renderBym(); }
     checkMatch(id);
     renderRadar(); renderMatches(); renderRoomHeader(); updateStatus();
   } else if (d.type === 'interest') {
     if (d.on === true) S.theirLikes.add(id); else S.theirLikes.delete(id);
     checkMatch(id); renderRadar();
+  } else if (d.type === 'private') {
+    const ch = S.chats[id];
+    if (!ch || isExpired(ch)) return;
+    const priv = cleanAnswers(d.priv, PRIV_Q);
+    if (!priv) return;
+    ch.priv = priv; saveChats();
+    if (S.active === id) renderBym();
   } else if (d.type === 'msg') {
     const ch = S.chats[id];
     if (!ch || isExpired(ch) || typeof d.text !== 'string') return;
@@ -938,8 +1277,9 @@ function onDirectData(id, d) {
 function checkMatch(id) {
   if (S.chats[id] || !S.likes.has(id) || !S.theirLikes.has(id)) return;
   const pr = S.profiles.get(id); if (!pr) return;
-  S.chats[id] = { start: Date.now(), handle: pr.p.handle, photo: pr.p.photo, msgs: [] };
+  S.chats[id] = { start: Date.now(), handle: pr.p.handle, photo: pr.p.photo, pub: pr.p.pub, tags: pr.p.tags, age: pr.p.age, msgs: [] };
   saveChats();
+  sendPrivate(id);
   toast(`It's a match with ${pr.p.handle}! Your 72-hour window has started.`, 'match');
   S.unread.add(id); updateChatDot(); renderMatches();
 }
@@ -966,17 +1306,18 @@ function pass(id) {
 /* ---------- Radar rendering ---------- */
 function visibleProfiles() {
   return [...S.profiles.entries()]
-    .filter(([id, x]) => !S.hidden.has(id) && x.dist <= S.radius)
+    .filter(([id, x]) => !S.hidden.has(id) && x.dist <= S.radius && ageOk(x.p.age, S.profile.ages) && ageOk(S.profile.age, x.p.ages))
     .sort((a, b) => b[1].score - a[1].score || a[1].dist - b[1].dist);
 }
 const tier = s => s >= 80 ? 'hi' : s >= 60 ? 'mid' : 'lo';
 function profileCard(id, x) {
   const matched = !!S.chats[id], liked = S.likes.has(id);
-  const pips = CLOCKS.map((c, i) => {
-    const d = x.per[i];
-    return el('div', { class: 'cp ' + (d === 0 ? 'a' : d <= .5 ? 'n' : 'd'), title: `Your answer: ${c.opts[S.profile.clocks[c.key]]}` },
-      el('i'), el('div', {}, el('b', {}, c.title), c.opts[x.p.clocks[c.key]]));
-  });
+  const ins = insights(S.profile.pub, x.p.pub, 'You', x.p.handle);
+  const c = { synergy: 0, note: 0, friction: 0 }; ins.forEach(i => c[i.type]++);
+  const shown = [...ins.filter(i => i.type === 'synergy').slice(0, 2), ...ins.filter(i => i.type !== 'synergy').slice(0, 2)];
+  const pips = el('div', {},
+    el('p', { class: 'counts' }, `${c.synergy} aligned · ${c.note} gentle ${c.note === 1 ? 'note' : 'notes'} · ${c.friction} worth a conversation`),
+    insList(shown, false));
   const actions = matched
     ? el('div', { class: 'actions one' }, el('button', { class: 'btn', type: 'button', onclick: () => openChat(id) }, 'Open chat'))
     : el('div', { class: 'actions' },
@@ -985,12 +1326,18 @@ function profileCard(id, x) {
   return el('article', { class: 'pcard' },
     el('div', { class: 'ph' },
       el('img', { src: x.p.photo, alt: `Photo of ${x.p.handle}`, loading: 'lazy' }),
-      el('div', { class: 'score ' + tier(x.score) }, el('strong', {}, x.score + '%'), el('span', {}, 'Two Clocks')),
+      el('div', { class: 'score ' + tier(x.score) }, el('strong', {}, x.score + '%'), el('span', {}, 'Resonance')),
       el('span', { class: 'dist-pill' }, fmtDist(x.dist))),
     el('div', { class: 'body' },
-      el('h3', {}, x.p.handle),
-      x.p.tags.length ? el('div', { class: 'tags' }, x.p.tags.map(t => el('span', {}, t))) : null,
-      el('div', { class: 'clocks', style: 'margin-bottom:14px' }, pips),
+      el('h3', {}, `${x.p.handle}, ${x.p.age}`),
+      el('p', { class: 'counts', style: 'margin:4px 0 0' }, x.shared.length
+        ? `${x.shared.length} shared ${x.shared.length === 1 ? 'interest' : 'interests'} · ${x.interest}% interest overlap · ${x.answers}% aligned answers`
+        : `No shared interests yet · ${x.answers}% aligned answers`),
+      el('div', { class: 'tags' }, (() => {
+        const sk = new Set(x.shared.map(tagKey));
+        return [...x.p.tags].sort((m, n) => sk.has(tagKey(n)) - sk.has(tagKey(m))).map(t => el('span', { class: sk.has(tagKey(t)) ? 'shared' : null }, (sk.has(tagKey(t)) ? '✓ ' : '') + t));
+      })()),
+      pips,
       actions));
 }
 function renderRadar() {
@@ -1061,7 +1408,8 @@ function showRoom() {
   const id = S.active; if (!id || !S.chats[id]) { showChatList(); return; }
   S.unread.delete(id); updateChatDot();
   $('#chatList').hidden = true; $('#room').hidden = false;
-  renderRoomHeader(); renderMessages();
+  $('#bym').open = !S.chats[id].msgs.length;
+  renderRoomHeader(); renderBym(); renderMessages();
   setTimeout(() => $('#msgInput').focus(), 50);
 }
 function renderRoomHeader() {
@@ -1075,6 +1423,21 @@ function renderRoomHeader() {
   $('#roomTimer').textContent = timeLeft(ch);
   $('#msgInput').disabled = !on; $('#sendBtn').disabled = !on;
   $('#msgInput').placeholder = on ? 'Write a message…' : 'Waiting for both of you to be online…';
+}
+function renderBym() {
+  const id = S.active, ch = id && S.chats[id];
+  if (!ch || !S.profile) return;
+  const body = $('#bymBody'); body.replaceChildren();
+  if (!ch.pub) { $('#bymScore').textContent = ''; body.append(el('p', { class: 'muted' }, 'Their answers will appear the next time you are both online.')); return; }
+  const R = resonance(S.profile, { pub: ch.pub, tags: ch.tags || [] });
+  $('#bymScore').textContent = R.score + '% resonance';
+  if (R.shared.length) body.append(el('div', { class: 'tags' }, R.shared.map(t => el('span', { class: 'shared' }, '✓ ' + t))));
+  body.append(insList(insights(S.profile.pub, ch.pub, 'You', ch.handle, ch.priv ? S.profile.priv : null, ch.priv || null, true), true));
+  if (!ch.priv) body.append(el('p', { class: 'muted' }, 'Their closeness answers arrive privately once you are both online.'));
+  else {
+    if (ch.priv.settled) body.append(el('div', { class: 'quote' }, el('b', {}, 'Already settled for them'), ch.priv.settled));
+    if (ch.priv.know) body.append(el('div', { class: 'quote' }, el('b', {}, 'One thing they’d like you to know'), ch.priv.know));
+  }
 }
 function renderMessages() {
   const id = S.active, ch = id && S.chats[id]; if (!ch) return;
@@ -1145,10 +1508,13 @@ setInterval(() => {
 setInterval(() => { purgeExpired(); if (currentTab === 'chat' && $('#room').hidden) renderMatches(); }, 30000);
 
 /* ---------- Boot ---------- */
-buildClocks();
+buildQuestions();
+buildAgeRanges();
 renderTags();
 purgeExpired();
+if (!S.profile && LS.get(K.profile, null)) toast('Two Clocks now matches on interests and age — please complete the new fields.');
 if (S.profile) fillForm(S.profile);
+else { const old = LS.get(K.profile, null); if (old && typeof old === 'object') { try { fillForm({ ...old, age: '', ages: [], pub: old.pub || {}, priv: old.priv || {}, tags: Array.isArray(old.tags) ? old.tags : [] }); } catch {} } }
 enableTabs();
 setLiveUI('off');
 renderRadar(); renderMatches();
