@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Two Clocks</title>
-<meta name="description" content="Zero-login, peer-to-peer local dating for spiritually grounded adults seeking marriage.">
+<meta name="description" content="Zero-login, peer-to-peer local dating for spiritually grounded adults seeking a long-term life partnership.">
 <meta name="theme-color" content="#1f5d58">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxZjVkNTgiLz4KICA8Y2lyY2xlIGN4PSIyNCIgY3k9IjMyIiByPSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMWVhIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8Y2lyY2xlIGN4PSI0MCIgY3k9IjMyIiByPSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTg5NDZkIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8cGF0aCBkPSJNMjQgMzJ2LThNMjQgMzJsNSAzIiBzdHJva2U9IiNmNWYxZWEiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNNDAgMzJ2LThNNDAgMzJsLTQuNSA0IiBzdHJva2U9IiNlODk0NmQiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -308,7 +308,7 @@ textarea.text{resize:vertical;min-height:76px;font:inherit}
         <div class="ic">!</div>
         <span class="banner-tag">Entry declined</span>
         <h2>This space isn't the right fit</h2>
-        <p>Two Clocks is exclusively for adults who share a spiritual baseline and are seeking marriage or a long-term life partnership. Onboarding has been halted — nothing was saved to this device or broadcast to anyone.</p>
+        <p>Two Clocks is exclusively for adults who share a spiritual baseline and are seeking a long-term life partnership. Onboarding has been halted — nothing was saved to this device or broadcast to anyone.</p>
         <button id="declinedReset" class="btn ghost" type="button">Start over</button>
       </div>
 
@@ -321,7 +321,7 @@ textarea.text{resize:vertical;min-height:76px;font:inherit}
           <label class="check"><input type="checkbox" id="adult"><span><strong>I am 18 or older</strong><small>Adults only.</small></span></label>
           <fieldset>
             <legend>Relationship intent</legend>
-            <label class="check"><input type="checkbox" id="intent"><span><strong>Marriage / Long-term life partnership</strong><small>The only intent this platform supports.</small></span></label>
+            <label class="check"><input type="checkbox" id="intent"><span><strong>Long-term life partnership</strong><small>The only intent this platform supports.</small></span></label>
           </fieldset>
           <fieldset>
             <legend>Faith / spiritual stance</legend>
@@ -455,7 +455,7 @@ textarea.text{resize:vertical;min-height:76px;font:inherit}
 const opt = (v, t, p) => ({ v, t, p: p || t });
 const SECTIONS = [
   { id: 'rhythm', title: 'Your rhythm', sub: 'How you move, meet and reply. These answers drive your resonance score on the radar.' },
-  { id: 'long',   title: 'The long picture', sub: 'Where you hope a marriage would take you, once there is a foundation.' },
+  { id: 'long',   title: 'The long picture', sub: 'Where you hope a life partnership would take you, once there is a foundation.' },
   { id: 'meet',   title: 'Before you meet', sub: 'Agree the shape of a first meeting, and of an honest ending, while nothing is at stake.' },
   { id: 'close',  title: 'Closeness', sub: 'Affection, intimacy and anything already settled. Never shown on the radar: shared privately, device to device, only after you both say yes.', lock: true },
 ];
@@ -503,10 +503,10 @@ const QUESTIONS = [
     why: 'Some people feel warmth in a held hand in the street; others feel exposed. Comfort here is often shaped by upbringing, culture and faith, so it is worth asking rather than guessing.' },
   { k: 'physPace', sec: 'close', priv: true, type: 'choice', short: 'When closeness feels right',
     label: 'When does physical closeness, like a kiss, feel right to you?', ctx: 'A general sense, not a promise. It will always depend on the person and the moment.',
-    options: [opt('first', 'It can feel natural on a first date', 'from the first date'), opt('few', 'After a few dates, once there is some trust', 'after a few dates'), opt('later', 'After weeks or months, once we are committed', 'once committed'), opt('commitment', 'Only within marriage or a long-term commitment', 'only within marriage'), opt('talk', 'I would rather we talk about it when we get there', 'to talk about when you get there')],
+    options: [opt('first', 'It can feel natural on a first date', 'from the first date'), opt('few', 'After a few dates, once there is some trust', 'after a few dates'), opt('later', 'After weeks or months, once we are committed', 'once committed'), opt('commitment', 'Only within a lifelong commitment', 'only within a lifelong commitment'), opt('talk', 'I would rather we talk about it when we get there', 'to talk about when you get there')],
     why: 'Being out of step on timing is uncomfortable for both people. One may feel rejected, the other pressured. Knowing early lets the slower pace lead, without either person feeling wrong.' },
   { k: 'intimacy', sec: 'close', priv: true, type: 'choice', short: 'Sexual intimacy',
-    label: 'How important is sexual intimacy to you in a marriage?', ctx: 'Over the long run, once there is trust. There is no right answer, and you can choose to talk about it in person instead.',
+    label: 'How important is sexual intimacy to you in a life partnership?', ctx: 'Over the long run, once there is trust. There is no right answer, and you can choose to talk about it in person instead.',
     options: [opt('none', 'It is not part of what I am looking for', 'not part of what they are looking for'), opt('small', 'A small part of a relationship for me', 'a small part'), opt('one', 'One part among many', 'one part among many'), opt('important', 'Important to me', 'important'), opt('central', 'Central to how I feel close', 'central'), opt('inperson', 'I would rather talk about this in person', 'to talk about in person')],
     why: 'Some people discover, months in, that their need for intimacy is very different from their partner’s. It is one of the quieter reasons good relationships end. Naming it early, without judgement, can save real heartache on both sides.' },
   { k: 'initiate', sec: 'close', priv: true, type: 'choice', short: 'Who reaches out first',
@@ -963,7 +963,7 @@ $('#onboard').addEventListener('submit', e => {
   const faith = ($('input[name="faith"]:checked') || {}).value;
   if (faith === 'non-spiritual') { declineEntry(); return; }
   if (!$('#adult').checked) errs.push('Confirm you are 18 or older.');
-  if (!$('#intent').checked) errs.push('Confirm you are seeking marriage / a long-term life partnership.');
+  if (!$('#intent').checked) errs.push('Confirm you are seeking a long-term life partnership.');
   if (faith !== 'spiritual') errs.push('Choose your faith / spiritual stance.');
   if (!S.draftPhoto) errs.push('Add a profile photo — it is required.');
   const handle = $('#handle').value.trim();
